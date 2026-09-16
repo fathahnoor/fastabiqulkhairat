@@ -1,0 +1,51 @@
+{
+  "baseline_sha256": "575a44135573eaf500d7cdae78b13856d723e50b69ddf3a814565b0ab9cdd02c",
+  "candidate_sha256": "5c4b29c5314fcccb1f5dcfc76860c862f6dfa96885d502d87d17a452ec94b68d",
+  "baseline_bytes": 665910,
+  "candidate_bytes": 630902,
+  "file_bytes_saved": 35008,
+  "file_reduction_percent": 5.26,
+  "expanded_body_before_bytes": 1949499,
+  "expanded_body_after_bytes": 1821531,
+  "expanded_body_saved_bytes": 127968,
+  "logical_images": 156,
+  "physical_images_before": 156,
+  "physical_images_after": 116,
+  "aod_referenced_images": 82,
+  "aod_unique_images": 62,
+  "aod_duplicate_blob_bytes": 63984,
+  "parameter_identity": true,
+  "image_blob_identity": true,
+  "max_pixel_delta": 0,
+  "baseline_container": {
+    "device_id": 83,
+    "quicklz_blocks": 475,
+    "decoded_block_bytes": 4096,
+    "raw_tail_bytes": 3899,
+    "format_marker": 1
+  },
+  "candidate_container": {
+    "device_id": 83,
+    "quicklz_blocks": 444,
+    "decoded_block_bytes": 4096,
+    "raw_tail_bytes": 2907,
+    "format_marker": 1
+  },
+  "aod_audit": {
+    "time_components": [
+      "hour",
+      "minute"
+    ],
+    "seconds_component": false,
+    "animation_component": false,
+    "custom_executable_code": false,
+    "static_artwork_baked_in_background": true,
+    "brightness_transforms_at_build_time": true,
+    "refresh_schedule": "Firmware controlled; not measured or changed",
+    "sensor_sampling": "No SDK sensor polling code in this declarative package",
+    "display_and_data_fields_changed": false
+  },
+  "device_compatibility_verified": false,
+  "battery_saving_measured": false,
+  "interpretation": "Storage and expanded package size only. Not a measurement of runtime RAM, redraw work, wakeups, or battery life. Shared offsets require a physical device compatibility check."
+}

@@ -398,6 +398,7 @@ def main():
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
     print(json.dumps(report,indent=2))
+    subprocess.run([sys.executable, str(ROOT/'tools/optimize_package.py')], cwd=ROOT, check=True)
 
 
 if __name__ == '__main__':

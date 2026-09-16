@@ -64,6 +64,11 @@ Parameter native jam `Center` dan menit `Follow` sudah ada pada binary sebelumny
 
 ## Build dan validasi
 
+Audit teknis daya dan kandidat pengemasan aset tersedia di [POWER_AUDIT.md](POWER_AUDIT.md).
+[Kandidat optimized](out/fastabiqulkhairat-optimized.bin) mempertahankan seluruh piksel AOD,
+tetapi penghematan baterai dan kompatibilitas offset bersama pada jam belum terukur.
+Binary utama tetap tersedia sebagai pembanding. Build menghasilkan kedua varian.
+
 ```powershell
 python tools/build.py
 ```

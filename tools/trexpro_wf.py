@@ -549,13 +549,15 @@ def validate_image_references(named, images):
     return {"image_id_base": 1, "background_id": bg_id, "preview_id": preview_id}
 
 
-def pack(parameters, images, compress=False):
+def pack(parameters, images, compress=False, deduplicate_images=False):
     """parameters: dict id(int)->nilai. images: list bytes ter-encode, SEMUA
     gambar reguler (termasuk preview 220x220 sebagai entri terakhir bila ada).
 
     Meniru file asli: stored count = len(images)+1, tabel berisi len(images)
     entri offset. Referensi preview di parameters menunjuk indeks sebenarnya.
     compress=True: body (byte 40+) dikompresi chunk 0x4F seperti file asli.
+    deduplicate_images=True: preserve logical IDs and ranges, but point identical
+    image entries to one physical blob. Opt-in pending device compatibility test.
     """
     params_info = {"1": {"1": 0, "2": len(images) + 1}}
     blobs = []
@@ -571,9 +573,17 @@ def pack(parameters, images, compress=False):
     info_blob = encode_params(params_info)
     images_info = bytearray()
     offset = 0
+    physical_images = []
+    offsets_by_blob = {}
     for blob in images:
-        images_info += struct.pack("<I", offset)
-        offset += len(blob)
+        if deduplicate_images and blob in offsets_by_blob:
+            image_offset = offsets_by_blob[blob]
+        else:
+            image_offset = offset
+            offsets_by_blob[blob] = offset
+            physical_images.append(blob)
+            offset += len(blob)
+        images_info += struct.pack("<I", image_offset)
     header = bytearray(HEADER_TEMPLATE)
     # Hardware ID and format marker observed in all four T-Rex Pro samples.
     struct.pack_into("<H", header, 16, 83)
@@ -582,7 +592,7 @@ def pack(parameters, images, compress=False):
     struct.pack_into("<I", header, PARAMS_INFO_SIZE_POS, len(info_blob))
     head = bytes(header[:COMPRESSION_START])
     tail = bytes(header[COMPRESSION_START:]) + info_blob + b"".join(blobs) + bytes(images_info)
-    for blob in images:
+    for blob in physical_images:
         tail += blob
     # @32 = ukuran body terdekompresi setelah 40 byte header (terbukti konsisten
     # pada semua file asli: @32 == declen - 40). Ditulis ke head agar valid
