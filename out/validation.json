@@ -1,12 +1,12 @@
 {
-  "sha256": "b4c8409a4fdce1cff0576793b24b91b1fc8f2fd7aa31cde7e6aded0793ebf099",
-  "bytes": 658097,
-  "images": 145,
+  "sha256": "c2fca3bd9d6e754652d164f61353473a6bf56b3da10107bad3a530e4023182df",
+  "bytes": 671650,
+  "images": 156,
   "container": {
     "device_id": 83,
-    "quicklz_blocks": 477,
+    "quicklz_blocks": 480,
     "decoded_block_bytes": 4096,
-    "raw_tail_bytes": 2378,
+    "raw_tail_bytes": 1563,
     "format_marker": 1
   },
   "parameter_roundtrip": true,
@@ -16,6 +16,12 @@
     68,
     81
   ],
+  "digit_one_body_width": 58,
+  "aod_metric_cell": [
+    14,
+    18
+  ],
+  "aod_metric_gain": 1.0,
   "calligraphy_pixel_delta": 0,
   "source_sha256": {
     "reference\\approved-design.png": "19bb9952bea6322dce139f75c94f0a006742b61e82089096acbb431c25b8b937",

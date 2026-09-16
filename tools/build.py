@@ -191,6 +191,27 @@ def generate():
         images.append(dark)
     idle = shift_image_ids({'Time': copy.deepcopy(time), 'Date': copy.deepcopy(date),
                            'Data': copy.deepcopy(data), 'BackgroundImageIndex': bg}, count)
+    # Larger, full-intensity digits only for AOD steps, HR, battery and day.
+    aod_numbers = len(images)
+    for digit in range(10):
+        source = source_assets.small_digit(digit)
+        images.append(source.resize((14,18), Image.Resampling.LANCZOS))
+    # Preserve percent glyph size and brightness, aligning its baseline to the numbers.
+    aod_percent = len(images)
+    percent = Image.new('RGBA',(images[pct+count].width,18))
+    percent.alpha_composite(images[pct+count],(0,5))
+    images.append(percent)
+    day_text = idle['Date']['YearMonthDay'][1]['Text']
+    day_text['Image'].update(Y=51, ImageRange=localized(aod_numbers,10))
+    for entry in idle['Data']:
+        if entry['Type'] not in ('Steps','HeartRate','Battery'):
+            continue
+        cx, n = {'Steps':(90,5),'HeartRate':(180,3),'Battery':(270,3)}[entry['Type']]
+        node=entry['NumberSequence']['Text']['Image']
+        node.update(X=cx-(n*14+1)//2-(7 if entry['Type']=='Battery' else 0),
+                    Y=281, ImageRange=localized(aod_numbers,10))
+        if entry['Type']=='Battery':
+            node['SuffixImage']=localized(aod_percent)
     params = {'Background': {'ImageIndex': bg, 'Preview': localized(len(images))},
               'Time': time, 'System': {'Date': date, 'Data': data}, 'IdleScreen': idle}
     for i, im in enumerate(images):
@@ -306,6 +327,17 @@ def main():
         sheet.paste(im,(i%3*360,i//3*385))
         ImageDraw.Draw(sheet).text((i%3*360+12,i//3*385+361),labels[i],fill=CREAM)
     sheet.save(OUT/'scenarios.png')
+    detail=Image.new('RGB',(1080,720),(0,0,0))
+    for column,(h,m) in enumerate(((5,11),(11,11),(21,10))):
+        for row,is_idle in enumerate((False,True)):
+            im=render(roundtrip,decoded,hour=h,minute=m,steps=6055,hr=106,
+                      battery=33,month=10,day=16,weekday=2,idle=is_idle)
+            detail.paste(im,(column*360,row*360))
+            if column==0:
+                im.save(OUT/('preview_aod_511.png' if is_idle else 'preview_511.png'))
+    detail.save(OUT/'spacing-aod-review.png')
+    render(roundtrip,decoded,hour=23,minute=59,steps=99999,hr=220,battery=100,
+           day=31,month=12,idle=True).save(OUT/'preview_aod_max.png')
     # Verify the serialized follower settings and actual decoded asset widths.
     hms=roundtrip['Time']['Digital']['HoursMinutesSeconds']
     assert hms[0]['Independent'] and not hms[1]['Independent']
@@ -323,7 +355,7 @@ def main():
             assert 0<=start and start+width+tail<=360
     report = {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'images':len(blobs),
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
-              'centered_time_cases':1440,'digit_cell':[68,81],'calligraphy_pixel_delta':0,
+              'centered_time_cases':1440,'digit_cell':[68,81],'digit_one_body_width':58,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
               'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET)},'arabic_text':ARABIC,'arabic_source':'unchanged crop from user-approved artwork',
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')

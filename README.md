@@ -10,7 +10,7 @@ Watchface Amazfit T-Rex Pro 360 x 360, memakai kaligrafi dan aset visual yang di
 
 - `reference/approved-design.png`: desain final pengguna. Kaligrafi, ornamen, garis, ikon metrik, dan label diambil langsung dari gambar ini. Tidak diketik ulang atau digambar ulang.
 - `reference/digits-approved.jpg`: lembar digit pengguna. Seluruh digit besar diambil dari lembar ini; angka 4 memakai varian lipatan pada baris kedua.
-- Atas permintaan pengguna, badan digit diseragamkan menjadi 66 x 81 px dalam sel 68 x 81 px. Angka 1 tetap ramping, 38 x 81 px dalam sel yang sama. Tekstur emas dan bentuk dasar dipertahankan. Normalisasi ini merupakan perubahan proporsi yang diminta pengguna.
+- Atas permintaan pengguna, badan digit diseragamkan menjadi 66 x 81 px dalam sel 68 x 81 px. Lebar angka 1 diperbaiki menjadi 58 x 81 px dalam sel yang sama. Tekstur emas dan bentuk dasar dipertahankan. Normalisasi ini merupakan perubahan proporsi yang diminta pengguna.
 - Titik dua berasal dari desain final. Area angka statis dibersihkan menggunakan tekstur gelap dari gambar yang sama, lalu diisi aset dinamis.
 - Digit kecil yang tersedia di desain dipotong langsung; digit kecil lainnya berasal dari lembar digit. MON dan AUG juga dipotong langsung. Nama hari/bulan lain memakai font pendukung Rajdhani, sedangkan kondisi cuaca lain memakai ikon programatis karena aset lengkapnya tidak terdapat dalam lampiran.
 
@@ -32,7 +32,7 @@ python tools/build.py
 
 Memerlukan Python dan Pillow. Tidak diperlukan pembentukan font Arab atau imagegen untuk build. Proses membuat aset, mengemas binary UIHH v2 terkompresi, membongkar kembali binary, membandingkan parameter dan semua piksel, lalu merender preview dari hasil pembongkaran.
 
-AOD mempertahankan seluruh elemen. Intensitas kanal RGB angka jam, menit, dan titik dua adalah 85%. Teks dan angka lainnya, termasuk tanggal, suhu, metrik, satuan, label, dan kaligrafi, memakai 80%. Ikon, ornamen, dan latar tetap 30%. Data dinamis: hari, bulan, tanggal, suhu, kondisi cuaca, langkah, detak jantung, dan baterai. Kesegaran data bergantung pada firmware.
+AOD mempertahankan seluruh elemen. Intensitas kanal RGB angka jam, menit, dan titik dua adalah 85%. Teks dan angka lainnya, termasuk tanggal, suhu, metrik, satuan, label, dan kaligrafi, memakai 80%. Ikon, ornamen, dan latar tetap 30%. Khusus angka langkah, BPM, baterai, dan tanggal pada AOD, sel diperbesar dari 11 x 13 menjadi 14 x 18 px dengan intensitas 100%. Label, nama hari/bulan, dan simbol persen tidak diperbesar. Posisi angka disesuaikan agar tetap terpisah dari ikon serta label. Data dinamis: hari, bulan, tanggal, suhu, kondisi cuaca, langkah, detak jantung, dan baterai. Kesegaran data bergantung pada firmware.
 
 Target adalah T-Rex Pro generasi awal. Instalasi fisik dan perilaku firmware, termasuk grup waktu dan pembaruan AOD, belum diuji pada jam. Hasil uji perangkat lunak tersedia di `out/validation.json`.
 

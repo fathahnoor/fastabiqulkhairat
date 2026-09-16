@@ -8,10 +8,12 @@ Koreksi pengguna berikutnya: "beberapa angka proporsinya masih tidak seragam, ka
 
 Implementasi saat ini:
 - Pemotongan aset deterministik ada di `tools/source_assets.py`.
-- Semua digit besar berada pada sel 68 x 81 px, badan 66 x 81 px kecuali angka 1 selebar 38 px.
+- Semua digit besar berada pada sel 68 x 81 px, badan 66 x 81 px kecuali angka 1 selebar 58 px.
 - Jam, titik dua, dan menit tetap satu grup rata tengah melalui suffix dan follower UIHH.
 - Kaligrafi berasal langsung dari latar desain final. Build memeriksa kesamaan piksel pada area kaligrafi setelah skala layar.
 - `tools/build.py` membangun versi desain final; binary lama sudah digantikan setelah validasi.
 - Digit kecil yang tersedia, MON, AUG, dan ikon partly cloudy diekstrak. Karakter tanggal/hari lain serta kondisi cuaca lain memakai aset pendukung karena sumber lengkap tidak tersedia.
 
 Jangan kembali memakai Noto Kufi Arabic untuk kaligrafi atau Oxanium untuk jam. Jangan regenerasi desain. Selalu periksa `out/scenarios.png` dan `out/digits-normalized.png` setelah perubahan visual. Instalasi fisik di T-Rex Pro tetap perlu diverifikasi oleh pengguna.
+
+Revisi berikutnya: rapatkan jarak digit 1 dengan badan 58 px dalam sel 68 px. Hanya angka langkah, BPM, baterai, dan tanggal AOD memakai sel 14 x 18 px dan intensitas 100%; label/satuan tetap ukuran sebelumnya. Periksa `out/spacing-aod-review.png` dan `out/preview_aod_max.png`.
