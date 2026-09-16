@@ -1,6 +1,18 @@
 # Fastabiqulkhairat
 
-Watchface emas dan hitam untuk Amazfit T-Rex Pro, layar bulat 360 x 360. Desain mengikuti referensi pengguna, dengan kaligrafi Arab yang dikoreksi.
+Watchface emas dan hitam untuk Amazfit T-Rex Pro, layar bulat 360 x 360.
+
+## Desain final pengguna
+
+![Desain final, tidak diubah](reference/approved-design.png)
+
+Gambar `reference/approved-design.png` adalah acuan final yang diberikan pengguna pada 16 September 2026. File disalin persis, tanpa perubahan piksel. Kaligrafi, font angka, tekstur emas, ikon, dan tata letaknya harus dipertahankan. Jangan mengganti dengan font lain, mengetik ulang kaligrafi, atau meregenerasi desain.
+
+**Binary dan preview di bawah adalah versi sebelumnya yang ditolak pengguna, bukan implementasi desain final.** Generator `tools/build.py` masih menghasilkan versi lama. Penggantian aset runtime menunggu sumber digit lengkap yang sesuai desain final. Gambar final hanya menyediakan digit waktu 1, 0, 4, dan 7; digit 2, 3, 5, 6, 8, dan 9 tidak boleh ditebak. Diperlukan aset font atau sprite 0-9, idealnya juga aset data kecil dan ikon cuaca.
+
+Syarat waktu tetap berlaku: jam, titik dua, dan menit harus terpusat sebagai satu grup. Catatan berikut hanya mendokumentasikan build sebelumnya.
+
+## Build sebelumnya, belum sesuai desain final
 
 ![Preview](out/preview.png)
 
