@@ -1,10 +1,46 @@
-# Fastabiqulkhairat
+# ✨ Fastabiqulkhairat | Pengingat kebaikan di pergelangan tangan
 
-Watchface Amazfit T-Rex Pro 360 x 360, memakai kaligrafi dan aset visual yang diberikan pengguna.
+Sekilas melihat jam, sejenak mengingat kebaikan. **Fastabiqulkhairat** hadir
+dengan kaligrafi, angka keemasan, dan latar hitam untuk **Amazfit T-Rex Pro
+(360 x 360)**. Semoga menjadi teman kecil untuk mengisi waktu dengan hal baik.
 
 ![Watchface](out/preview.png)
 
-[Binary](out/fastabiqulkhairat.bin) | [Skenario waktu](out/scenarios.png) | [Digit yang diseragamkan](out/digits-normalized.png) | [Laporan verifikasi](out/validation.json)
+**[⬇️ Unduh watchface](out/fastabiqulkhairat.bin)** · [🖼️ Lihat skenario waktu](out/scenarios.png) · [Laporan verifikasi](out/validation.json)
+
+## 🌙 Yang menemani harimu
+
+- **Kaligrafi sebagai pusat perhatian**, dengan ornamen dan nuansa emas di atas latar gelap.
+- **Jam besar dengan bentuk angka khas**, disusun sebagai satu grup waktu yang rata tengah pada preview.
+- **Informasi harian tetap dekat:** hari, tanggal, bulan, suhu, dan kondisi cuaca.
+- **Langkah, detak jantung, dan baterai** untuk dilirik di sela aktivitas.
+- **Always-on tetap lengkap**, dengan latar dan ornamen lebih redup serta angka metrik dan tanggal yang diperbesar.
+
+## 🖼️ Galeri tampilan
+
+| Tampilan utama ✨ | Always-on 🌙 |
+| :---: | :---: |
+| ![Tampilan utama Fastabiqulkhairat](out/preview_511.png) | ![Tampilan always-on Fastabiqulkhairat](out/preview_aod_511.png) |
+
+[Lihat variasi waktu lainnya](out/scenarios.png) atau [lembar bentuk angka](out/digits-normalized.png).
+Semua gambar ini adalah preview dari hasil build. **Instalasi fisik, perataan
+waktu pada firmware, dan pembaruan AOD belum diuji pada jam.**
+
+## ⌚ Cara pasang
+
+1. Buka [file Fastabiqulkhairat](out/fastabiqulkhairat.bin), lalu klik **Download raw file** untuk menyimpan `.bin`.
+2. Siapkan aplikasi pemasang watchface lokal, misalnya AmazFaces, dan pilih **Amazfit T-Rex Pro**.
+3. Gunakan menu file lokal untuk memilih `.bin` tadi. Nama menu mengikuti versi aplikasi yang dipakai.
+4. Ikuti petunjuk aplikasi sampai selesai, lalu periksa tampilan, waktu, dan metrik pada jam.
+
+Paket ini memakai format legacy **UIHH v2** untuk T-Rex Pro generasi awal.
+Panduan ini merupakan alur pemasangan yang perlu dicoba pada perangkat;
+belum ada konfirmasi instalasi fisik untuk edisi ini.
+
+## 🛠️ Di balik tampilannya
+
+Bagian berikut menyimpan rincian aset, build, dan batas verifikasi untuk
+yang ingin mengutak-atik desainnya sendiri.
 
 ## Desain dan aset
 
@@ -43,3 +79,6 @@ Target adalah T-Rex Pro generasi awal. Instalasi fisik dan perilaku firmware, te
 Kode turunan skema [watchface-js](https://github.com/Nadeflore/watchface-js) mengikuti GPL-3.0, lihat `LICENSE` dan `tools/LICENSE.watchface-js`. Packer diadaptasi dari baseline lokal TEL-U T-Rex Pro. Semantik digit mengikuti [editor SashaCX75](https://github.com/SashaCX75/AmazFit_Watchface_Editor_2/blob/master/GTR_Watch_face/PreviewToBitmap.cs).
 
 Font yang tersimpan berlisensi SIL OFL, salinan lisensi ada di `assets/fonts`. Desain dan lembar digit diberikan pengguna; lisensi kode tidak dimaksudkan sebagai klaim kepemilikan karya visual pihak lain.
+
+Dibuat oleh [@fathahnoor](https://github.com/fathahnoor). Semoga setiap lirikan
+ke jam menjadi pengingat untuk menyempatkan satu kebaikan lagi. 🌿
