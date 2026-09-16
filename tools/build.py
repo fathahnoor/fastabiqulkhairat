@@ -179,8 +179,9 @@ def generate():
              {'Type': 'Weather', 'Linear': {'Segments': {'X':83,'Y':25}, 'ImageRange': {'ImageIndex': weather, 'ImagesCount': 29}}}]
     # All fields remain in AOD. Use dimmed bitmaps, with no runtime timer.
     count = len(images)
-    for im in images[:]:
-        dark = ImageEnhance.Brightness(im).enhance(.30)
+    for index, im in enumerate(images[:]):
+        gain = .45 if big <= index <= colon_id else .30
+        dark = ImageEnhance.Brightness(im).enhance(gain)
         images.append(dark)
     idle = shift_image_ids({'Time': copy.deepcopy(time), 'Date': copy.deepcopy(date),
                            'Data': copy.deepcopy(data), 'BackgroundImageIndex': bg}, count)
