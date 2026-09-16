@@ -1,14 +1,17 @@
 # Desain final Fastabiqulkhairat
 
-Sumber kanonis: `reference/approved-design.png`, salinan byte-identik lampiran pengguna `ChatGPT Image Sep 16, 2026, 04_15_10 PM.png`.
+Sumber kanonis:
+- `reference/approved-design.png`: desain final pengguna, jangan ubah kaligrafi, ornamen, ikon metrik, atau label statis.
+- `reference/digits-approved.jpg`: digit lengkap dari pengguna. Pilih angka 4 dengan lipatan pada baris kedua.
 
-Instruksi pengguna: "ini saya buatkan saja dan jangan kamu ubah lagi."
+Koreksi pengguna berikutnya: "beberapa angka proporsinya masih tidak seragam, kamu rapikan juga ya". Ini mengizinkan normalisasi proporsi digit tanpa mengganti bentuk dasar, tekstur emas, atau font sumber.
 
-- Pertahankan desain kaligrafi dan seluruh titiknya persis dari gambar ini. Jangan ketik ulang menggunakan Noto Kufi Arabic atau font lain.
-- Pertahankan bentuk angka besar, tekstur, warna, dan efek lipatan angka 4. Jangan gunakan Oxanium atau font pengganti.
-- Pertahankan susunan, ikon, label, garis, dan ornamen pada gambar.
-- Waktu harus tetap dinamis sebagai satu grup jam, titik dua, dan menit yang rata tengah.
-- Lampiran hanya memuat digit besar 1, 0, 4, 7. Untuk hasil sesuai desain, dapatkan sprite digit lengkap 0-9 atau sumber font/aset asli. Jangan mengarang bentuk digit yang tidak tersedia.
-- `out/fastabiqulkhairat.bin`, preview hasil build, dan `tools/build.py` masih versi sebelumnya yang ditolak. Jangan menyebutnya implementasi desain final atau memublikasikannya sebagai revisi yang sudah selesai.
+Implementasi saat ini:
+- Pemotongan aset deterministik ada di `tools/source_assets.py`.
+- Semua digit besar berada pada sel 68 x 81 px, badan 66 x 81 px kecuali angka 1 selebar 38 px.
+- Jam, titik dua, dan menit tetap satu grup rata tengah melalui suffix dan follower UIHH.
+- Kaligrafi berasal langsung dari latar desain final. Build memeriksa kesamaan piksel pada area kaligrafi setelah skala layar.
+- `tools/build.py` membangun versi desain final; binary lama sudah digantikan setelah validasi.
+- Digit kecil yang tersedia, MON, AUG, dan ikon partly cloudy diekstrak. Karakter tanggal/hari lain serta kondisi cuaca lain memakai aset pendukung karena sumber lengkap tidak tersedia.
 
-Langkah berikutnya: terima aset digit lengkap; ekstrak aset statis dari sumber final secara deterministik; susun ulang pipeline tanpa substitusi visual; verifikasi waktu pendek/panjang dan binary; periksa preview terhadap desain final sebelum mengganti artefak distribusi.
+Jangan kembali memakai Noto Kufi Arabic untuk kaligrafi atau Oxanium untuk jam. Jangan regenerasi desain. Selalu periksa `out/scenarios.png` dan `out/digits-normalized.png` setelah perubahan visual. Instalasi fisik di T-Rex Pro tetap perlu diverifikasi oleh pengguna.

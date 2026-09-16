@@ -7,7 +7,8 @@ from pathlib import Path
 import subprocess
 import sys
 
-from PIL import Image, ImageDraw, ImageFont, ImageEnhance, features
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageChops
+import source_assets
 from trexpro_wf import (unpack, decode_image, ids_to_names, names_to_ids,
                        shift_image_ids, validate_trexpro_container, validate_image_references)
 
@@ -19,8 +20,8 @@ GOLD = (210, 170, 91)
 CREAM = (249, 225, 175)
 ARABIC = 'فاستبقوا الخيرات'
 SIZE = 360
-TIME = {'center_x': 180, 'y': 176, 'digit_width': 58, 'height': 80,
-        'colon_width': 16, 'leading_zero': False, 'alignment': 'center'}
+TIME = {'center_x': 180, 'y': 159, 'digit_width': 68, 'height': 81,
+        'colon_width': 22, 'leading_zero': False, 'alignment': 'center'}
 
 
 def font(name, size, weight=None):
@@ -110,36 +111,8 @@ def icon(kind, size=24):
 
 
 def background():
-    im = Image.open(ROOT/'assets/texture.png').convert('RGBA').resize((360, 360), Image.Resampling.LANCZOS)
-    im = ImageEnhance.Brightness(im).enhance(.55)
-    d = ImageDraw.Draw(im)
-    for y, x1, x2 in ((88, 70, 290), (166, 48, 312), (266, 48, 312)):
-        if y == 88:
-            d.line((x1, y, 162, y), fill=GOLD)
-            d.line((198, y, x2, y), fill=GOLD)
-        else:
-            d.line((x1, y, x2, y), fill=GOLD)
-    star(d, 180, 88, 14)
-    star(d, 180, 337, 6)
-    d.line((118, 337, 169, 337), fill=GOLD)
-    d.line((191, 337, 242, 337), fill=GOLD)
-    d.line((138, 283, 138, 322), fill=GOLD)
-    d.line((222, 283, 222, 322), fill=GOLD)
-    # RAQM/HarfBuzz shapes an exact Unicode string. No generated letter dots.
-    assert features.check('raqm'), 'Arabic shaping requires the existing Pillow RAQM build'
-    arabic = glyph(ARABIC, 'NotoKufiArabic.ttf', 39, GOLD, 700, rtl=True)
-    scale = min(258/arabic.width, 53/arabic.height)
-    arabic = arabic.resize((round(arabic.width*scale), 49), Image.Resampling.LANCZOS)
-    centered(im, arabic, 180, 108+(49-arabic.height)//2)
-    arabic.save(OUT/'calligraphy.png')
-    for x, kind, label in ((96, 'steps', 'STEPS'), (180, 'heart', 'BPM'), (264, 'battery', 'BATTERY')):
-        centered(im, icon(kind, 24), x, 276)
-        centered(im, glyph(label, 'Rajdhani-SemiBold.ttf', 12, (158, 141, 112)), x, 322)
-    mask = Image.new('L', (360, 360))
-    ImageDraw.Draw(mask).ellipse((1, 1, 358, 358), fill=255)
-    base = Image.new('RGBA', (360, 360), (0, 0, 0, 255))
-    base.paste(im, (0, 0), mask)
-    return base
+    source_assets.approved_crop((178,309,1053,504)).save(OUT/'calligraphy.png')
+    return source_assets.background()
 
 
 def localized(index, count=1):
@@ -160,26 +133,23 @@ def generate():
         return len(images)-1
     bg = add(background())
     big = len(images)
-    for ch in '0123456789':
-        # Same advance for each numeral. Varying hour digit count is centered as one group.
-        im = cell(ch, 58, 80, 108, 'Oxanium.ttf', CREAM, 800)
-        add(im)
-    colon = Image.new('RGBA', (16, 80))
-    d = ImageDraw.Draw(colon)
-    for y in (27, 52):
-        d.polygon([(8,y-7), (15,y), (8,y+7), (1,y)], fill=GOLD)
+    for ch in range(10):
+        add(source_assets.time_cell(ch))
+    colon = Image.new('RGBA', (22,81))
+    raw = source_assets.approved_crop((588,600,663,757),(19,43))
+    colon.alpha_composite(raw,(1,15))
     colon_id = add(colon)
     small = len(images)
     for ch in '0123456789':
-        add(cell(ch, 10, 20, 23))
-    pct = add(cell('%', 12, 20, 20))
-    degree = add(cell('°', 8, 20, 20))
+        add(source_assets.small_digit(int(ch)))
+    pct = add(source_assets.approved_crop((950,984,1008,1032),(15,13)))
+    degree = add(source_assets.approved_crop((367,190,381,209),(4,5)))
     weekdays = len(images)
     for s in ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']:
-        add(cell(s, 65, 21, 24))
+        add(source_assets.approved_crop((846,119,990,167),(41,14)) if s=='MON' else cell(s,41,14,19))
     months = len(images)
     for s in ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']:
-        add(cell(s, 34, 18, 19))
+        add(source_assets.approved_crop((840,188,948,230),(31,12)) if s=='AUG' else cell(s,31,12,17))
     weather = len(images)
     # UIHH weather order follows the existing T-Rex Pro baseline (29 states).
     kinds = ['sun', 'partly', 'partly', 'cloud', 'rain', 'rain', 'rain', 'storm',
@@ -187,9 +157,9 @@ def generate():
              'moon', 'cloud', 'cloud', 'rain', 'rain', 'storm', 'snow', 'fog',
              'cloud', 'rain', 'sun', 'cloud', 'cloud']
     for kind in kinds:
-        add(icon(kind, 30))
+        add(source_assets.approved_crop((287,85,410,184),(35,28)) if kind=='partly' else icon(kind,28))
     # The one logical time field compiles to hour + separator + following minute.
-    # Firmware reserves 2*58+1 for hours. Center it 66 px left of the group center.
+    # Include the complete fixed-width minute pair and colon in the group center.
     # Minutes have two fixed advances, so the entire HH:MM width is included.
     hour_x = TIME['center_x'] - (TIME['colon_width'] + 2*TIME['digit_width'])//2 - (2*TIME['digit_width']+1)//2
     time = {'Digital': {'HoursMinutesSeconds': [
@@ -197,16 +167,16 @@ def generate():
          'Text': number(hour_x, TIME['y'], big, align='Center', suffix=colon_id)},
         {'Type': 1, 'Independent': False, 'Text': number(0, 0, big, zero=1)}]}}
     date = {'YearMonthDay': [
-        {'Type': 1, 'Independent': True, 'Text': number(229, 66, months, 12)},
-        {'Type': 2, 'Independent': True, 'Text': number(267, 64, small, zero=1)}],
-        'Week': {'Independent': True, 'Text': number(227, 40, weekdays, 7)}}
+        {'Type': 1, 'Independent': True, 'Text': number(241,55,months,12)},
+        {'Type': 2, 'Independent': True, 'Text': number(276,55,small,zero=1)}],
+        'Week': {'Independent': True, 'Text': number(244,35,weekdays,7)}}
     data = []
-    for typ, cx, maxdigits, suffix in [('Steps', 96, 5, None), ('HeartRate', 180, 3, None), ('Battery', 264, 3, pct)]:
-        x = cx-(maxdigits*10+1)//2-(6 if suffix else 0)
+    for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('HeartRate',180,3,None),('Battery',270,3,pct)]:
+        x = cx-(maxdigits*11+1)//2-(7 if suffix else 0)
         data.append({'Type': typ, 'NumberSequence': {'Independent': True,
-                    'Text': number(x, 300, small, align='Center', suffix=suffix)}})
-    data += [{'Type': 'Weather', 'NumberSequence': {'Independent': True, 'Text': number(95, 64, small, suffix=degree)}},
-             {'Type': 'Weather', 'Linear': {'Segments': {'X': 93, 'Y': 31}, 'ImageRange': {'ImageIndex': weather, 'ImagesCount': 29}}}]
+                    'Text': number(x,284,small, align='Center', suffix=suffix)}})
+    data += [{'Type': 'Weather', 'NumberSequence': {'Independent': True, 'Text': number(85,55,small, suffix=degree)}},
+             {'Type': 'Weather', 'Linear': {'Segments': {'X':83,'Y':25}, 'ImageRange': {'ImageIndex': weather, 'ImagesCount': 29}}}]
     # All fields remain in AOD. Use dimmed bitmaps, with no runtime timer.
     count = len(images)
     for im in images[:]:
@@ -286,6 +256,17 @@ def main():
     BUILD.mkdir(exist_ok=True)
     OUT.mkdir(exist_ok=True)
     p, images = generate()
+    approved=Image.open(source_assets.SRC).convert('RGBA').resize((360,360),Image.Resampling.LANCZOS)
+    region=(48,89,303,145)
+    delta=ImageChops.difference(images[0].crop(region),approved.crop(region))
+    assert max(channel[1] for channel in delta.getextrema())==0, 'Calligraphy changed'
+    atlas=Image.new('RGB',(440,216),(0,0,0))
+    for digit in range(10):
+        sprite=source_assets.time_cell(digit)
+        assert sprite.size==(68,81)
+        atlas.paste(sprite,(digit%5*88+10,digit//5*108),sprite)
+        ImageDraw.Draw(atlas).text((digit%5*88+39,digit//5*108+87),str(digit),fill=CREAM)
+    atlas.save(OUT/'digits-normalized.png')
     preview = render(p, images)
     preview.resize((220,220), Image.Resampling.LANCZOS).save(BUILD/'preview.png')
     subprocess.run([sys.executable, str(ROOT/'tools/pack_watchface.py'), str(BUILD), str(OUT/'fastabiqulkhairat.bin')], check=True, stdout=subprocess.DEVNULL)
@@ -318,16 +299,25 @@ def main():
         sheet.paste(im,(i%3*360,i//3*385))
         ImageDraw.Draw(sheet).text((i%3*360+12,i//3*385+361),labels[i],fill=CREAM)
     sheet.save(OUT/'scenarios.png')
-    # Exhaustively test the group bounding width for all 1,440 minute values.
+    # Verify the serialized follower settings and actual decoded asset widths.
+    hms=roundtrip['Time']['Digital']['HoursMinutesSeconds']
+    assert hms[0]['Independent'] and not hms[1]['Independent']
+    assert hms[0]['Text']['Alignment']=='Center'
+    assert not hms[0]['Text']['ZeroPadding'] and hms[1]['Text']['ZeroPadding']==1
+    hbase=hms[0]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
+    mbase=hms[1]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
+    colon=decoded[hms[0]['Text']['Image']['SuffixImage']['ImageRange']['ImageIndex']]
     for hour in range(24):
         for minute in range(60):
-            width=len(str(hour))*58
-            start=text_start(p['Time']['Digital']['HoursMinutesSeconds'][0]['Text'],width,2,58)
-            assert start+(width+16+116)/2 == 180
-            assert 0 <= start and start+width+132 <= 360
+            width=sum(decoded[hbase+int(c)].width for c in str(hour))
+            tail=colon.width+sum(decoded[mbase+int(c)].width for c in f'{minute:02d}')
+            start=text_start(hms[0]['Text'],width,2,decoded[hbase].width)
+            assert start+(width+tail)/2==180
+            assert 0<=start and start+width+tail<=360
     report = {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'images':len(blobs),
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
-              'centered_time_cases':1440,'arabic_text':ARABIC,'arabic_shaping':'Pillow RAQM / HarfBuzz',
+              'centered_time_cases':1440,'digit_cell':[68,81],'calligraphy_pixel_delta':0,
+              'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET)},'arabic_text':ARABIC,'arabic_source':'unchanged crop from user-approved artwork',
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
     print(json.dumps(report,indent=2))

@@ -1,56 +1,43 @@
 # Fastabiqulkhairat
 
-Watchface emas dan hitam untuk Amazfit T-Rex Pro, layar bulat 360 x 360.
+Watchface Amazfit T-Rex Pro 360 x 360, memakai kaligrafi dan aset visual yang diberikan pengguna.
 
-## Desain final pengguna
+![Watchface](out/preview.png)
 
-![Desain final, tidak diubah](reference/approved-design.png)
+[Binary](out/fastabiqulkhairat.bin) | [Skenario waktu](out/scenarios.png) | [Digit yang diseragamkan](out/digits-normalized.png) | [Laporan verifikasi](out/validation.json)
 
-Gambar `reference/approved-design.png` adalah acuan final yang diberikan pengguna pada 16 September 2026. File disalin persis, tanpa perubahan piksel. Kaligrafi, font angka, tekstur emas, ikon, dan tata letaknya harus dipertahankan. Jangan mengganti dengan font lain, mengetik ulang kaligrafi, atau meregenerasi desain.
+## Desain dan aset
 
-**Binary dan preview di bawah adalah versi sebelumnya yang ditolak pengguna, bukan implementasi desain final.** Generator `tools/build.py` masih menghasilkan versi lama. Penggantian aset runtime menunggu sumber digit lengkap yang sesuai desain final. Gambar final hanya menyediakan digit waktu 1, 0, 4, dan 7; digit 2, 3, 5, 6, 8, dan 9 tidak boleh ditebak. Diperlukan aset font atau sprite 0-9, idealnya juga aset data kecil dan ikon cuaca.
+- `reference/approved-design.png`: desain final pengguna. Kaligrafi, ornamen, garis, ikon metrik, dan label diambil langsung dari gambar ini. Tidak diketik ulang atau digambar ulang.
+- `reference/digits-approved.jpg`: lembar digit pengguna. Seluruh digit besar diambil dari lembar ini; angka 4 memakai varian lipatan pada baris kedua.
+- Atas permintaan pengguna, badan digit diseragamkan menjadi 66 x 81 px dalam sel 68 x 81 px. Angka 1 tetap ramping, 38 x 81 px dalam sel yang sama. Tekstur emas dan bentuk dasar dipertahankan. Normalisasi ini merupakan perubahan proporsi yang diminta pengguna.
+- Titik dua berasal dari desain final. Area angka statis dibersihkan menggunakan tekstur gelap dari gambar yang sama, lalu diisi aset dinamis.
+- Digit kecil yang tersedia di desain dipotong langsung; digit kecil lainnya berasal dari lembar digit. MON dan AUG juga dipotong langsung. Nama hari/bulan lain memakai font pendukung Rajdhani, sedangkan kondisi cuaca lain memakai ikon programatis karena aset lengkapnya tidak terdapat dalam lampiran.
 
-Syarat waktu tetap berlaku: jam, titik dua, dan menit harus terpusat sebagai satu grup. Catatan berikut hanya mendokumentasikan build sebelumnya.
+Gambar sumber disimpan tanpa perubahan. Build memeriksa hash sumber dan kesamaan piksel area kaligrafi pada latar 360 x 360. File font Noto Kufi Arabic dan Oxanium serta tekstur generasi lama masih tersimpan untuk riwayat, tetapi tidak dipakai untuk kaligrafi atau jam pada build ini.
 
-## Build sebelumnya, belum sesuai desain final
+## Waktu rata tengah
 
-![Preview](out/preview.png)
+`design.json` mendefinisikan satu field waktu pada x=180. Jam tanpa nol awal, menit dua digit. Contoh: `9:07`, `10:47`, `1:11`.
 
-[Unduh binary](out/fastabiqulkhairat.bin) | [Semua skenario](out/scenarios.png) | [Hasil verifikasi](out/validation.json)
+Format UIHH v2 memerlukan entri jam dan menit, tetapi keduanya terhubung menjadi satu grup: jam berperataan `Center`, titik dua sebagai `SuffixImage`, dan menit `Independent: false`. Posisi jam memperhitungkan seluruh lebar menit dan titik dua.
 
-## Kaligrafi
+Sel digit 68 px dan titik dua 22 px menghasilkan lebar 226 px untuk waktu tiga digit (x=67) dan 294 px untuk empat digit (x=33). Keduanya berpusat pada x=180. Seluruh 1.440 kombinasi waktu 24 jam diperiksa. Geometri yang diperiksa adalah sel aset; bentuk angka 1 tetap lebih ramping di dalam selnya.
 
-Teks sumber adalah **فاستبقوا الخيرات**. Lafaz berharakat: **فَاسْتَبِقُوا الْخَيْرَاتِ**. Desain memakai versi tanpa harakat agar titik huruf terbaca jelas pada layar kecil.
-
-Kaligrafi dibentuk dari Unicode menggunakan Noto Kufi Arabic dengan RAQM/HarfBuzz. Huruf tidak diambil dari gambar AI. Titik huruf: fa satu di atas, ta dua di atas, ba satu di bawah, qaf dua di atas, kha satu di atas, ya dua di bawah, dan ta terakhir dua di atas. Total 11 titik huruf. Alif, sin, waw, lam, dan ra tidak bertitik. Ornamen bintang berada di luar baris tulisan.
-
-## Waktu sebagai satu field
-
-`design.json` memiliki satu `time_field`, rata tengah pada x=180. Jam tidak memakai nol awal, menit selalu dua digit: `9:07`, `10:47`, `1:11`.
-
-UIHH v2 menyimpan jam dan menit sebagai dua entri. Compiler memakai satu grup terhubung: jam `Center`, titik dua sebagai `SuffixImage` jam, dan menit `Independent: false` agar mengikuti jam. Posisi jam memperhitungkan lebar titik dua dan menit. Tidak ada titik dua statis di latar atau posisi menit yang dipatok terpisah. Field `Separator` berkoordinat tetap sengaja tidak digunakan karena bukan suffix yang mengikuti angka.
-
-Dengan digit selebar 58 px dan separator 16 px, grup tiga digit memiliki lebar 190 px dan dimulai pada x=85. Grup empat digit memiliki lebar 248 px dan dimulai pada x=56. Keduanya berpusat pada x=180. Seluruh 1.440 kombinasi waktu 24 jam diperiksa oleh build. Perilaku firmware fisik tetap perlu diuji pada jam.
-
-## Data dan AOD
-
-Hari, bulan, tanggal, suhu, kondisi cuaca, langkah, detak jantung, dan baterai memakai data perangkat. AOD mempertahankan semua elemen dengan bitmap yang diredupkan menjadi 30% intensitas kanal RGB. Kesegaran data AOD mengikuti firmware.
-
-## Build
-
-Gunakan Python dan Pillow dengan RAQM yang sudah tersedia:
+## Build dan validasi
 
 ```powershell
 python tools/build.py
 ```
 
-Build membuat aset, preview 220 x 220, binary UIHH v2 terkompresi, membongkar ulang binary, membandingkan parameter dan seluruh piksel, serta menghasilkan enam preview dari data hasil pembongkaran. Batas perbedaan kanal piksel adalah 8; nilai aktual dicatat pada laporan.
+Memerlukan Python dan Pillow. Tidak diperlukan pembentukan font Arab atau imagegen untuk build. Proses membuat aset, mengemas binary UIHH v2 terkompresi, membongkar kembali binary, membandingkan parameter dan semua piksel, lalu merender preview dari hasil pembongkaran.
 
-File `.bin` ini menargetkan T-Rex Pro generasi awal, bukan T-Rex 2 atau T-Rex 3. Pengujian instalasi dan perilaku waktu langsung pada perangkat belum dilakukan.
+AOD mempertahankan seluruh elemen dengan intensitas kanal RGB 30%. Data dinamis: hari, bulan, tanggal, suhu, kondisi cuaca, langkah, detak jantung, dan baterai. Kesegaran data bergantung pada firmware.
 
-## Sumber dan lisensi
+Target adalah T-Rex Pro generasi awal. Instalasi fisik dan perilaku firmware, termasuk grup waktu dan pembaruan AOD, belum diuji pada jam. Hasil uji perangkat lunak tersedia di `out/validation.json`.
 
-- Referensi visual: `reference/design.png`, diberikan pengguna. Tekstur baru dibuat dengan imagegen; kaligrafi dan UI disusun oleh generator.
-- [Noto Kufi Arabic](https://github.com/google/fonts/tree/main/ofl/notokufiarabic), [Oxanium](https://github.com/google/fonts/tree/main/ofl/oxanium), dan [Rajdhani](https://github.com/google/fonts/tree/main/ofl/rajdhani): SIL OFL, salinan lisensi di `assets/fonts`.
-- Packer berasal dari proyek lokal TEL-U T-Rex Pro. Skema diadaptasi dari [watchface-js](https://github.com/Nadeflore/watchface-js), GPL-3.0. Lisensi disertakan di `tools/LICENSE.watchface-js`; kode turunan mengikuti GPL-3.0.
-- Semantik `Follow` dan perataan digit dirujuk dari [PreviewToBitmap.cs](https://github.com/SashaCX75/AmazFit_Watchface_Editor_2/blob/master/GTR_Watch_face/PreviewToBitmap.cs) dalam editor SashaCX75. Preview perangkat lunak bukan bukti instalasi fisik.
+## Lisensi dan sumber teknis
+
+Kode turunan skema [watchface-js](https://github.com/Nadeflore/watchface-js) mengikuti GPL-3.0, lihat `LICENSE` dan `tools/LICENSE.watchface-js`. Packer diadaptasi dari baseline lokal TEL-U T-Rex Pro. Semantik digit mengikuti [editor SashaCX75](https://github.com/SashaCX75/AmazFit_Watchface_Editor_2/blob/master/GTR_Watch_face/PreviewToBitmap.cs).
+
+Font yang tersimpan berlisensi SIL OFL, salinan lisensi ada di `assets/fonts`. Desain dan lembar digit diberikan pengguna; lisensi kode tidak dimaksudkan sebagai klaim kepemilikan karya visual pihak lain.

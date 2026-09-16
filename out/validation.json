@@ -1,18 +1,27 @@
 {
-  "sha256": "c33ef7b3dd7c897b483416a956323dd893a14370e3832c6463a44a58887139ff",
-  "bytes": 733379,
+  "sha256": "c82615a09bdcd3c6058cda8cc969fe58c3ee7b7b4ce6a5f457f31fe359668a11",
+  "bytes": 614976,
   "images": 145,
   "container": {
     "device_id": 83,
-    "quicklz_blocks": 483,
+    "quicklz_blocks": 477,
     "decoded_block_bytes": 4096,
-    "raw_tail_bytes": 1498,
+    "raw_tail_bytes": 2378,
     "format_marker": 1
   },
   "parameter_roundtrip": true,
   "max_pixel_delta": 0,
   "centered_time_cases": 1440,
+  "digit_cell": [
+    68,
+    81
+  ],
+  "calligraphy_pixel_delta": 0,
+  "source_sha256": {
+    "reference\\approved-design.png": "19bb9952bea6322dce139f75c94f0a006742b61e82089096acbb431c25b8b937",
+    "reference\\digits-approved.jpg": "628b02b0eb730c9dfc1a6a995fec8e725304eca76b212e5072e0c56bef160995"
+  },
   "arabic_text": "فاستبقوا الخيرات",
-  "arabic_shaping": "Pillow RAQM / HarfBuzz",
+  "arabic_source": "unchanged crop from user-approved artwork",
   "device_test": "Pending physical T-Rex Pro installation"
 }
