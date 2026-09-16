@@ -180,8 +180,14 @@ def generate():
     # All fields remain in AOD. Use dimmed bitmaps, with no runtime timer.
     count = len(images)
     for index, im in enumerate(images[:]):
-        gain = .45 if big <= index <= colon_id else .30
+        gain = .85 if big <= index <= colon_id else (.80 if small <= index < weather else .30)
         dark = ImageEnhance.Brightness(im).enhance(gain)
+        if index == bg:
+            # Static Arabic and metric labels are baked into the source background.
+            readable = ImageEnhance.Brightness(im).enhance(.80)
+            for box in ((48,89,303,145), (66,299,115,311),
+                        (167,299,193,311), (247,299,296,311)):
+                dark.paste(readable.crop(box), box)
         images.append(dark)
     idle = shift_image_ids({'Time': copy.deepcopy(time), 'Date': copy.deepcopy(date),
                            'Data': copy.deepcopy(data), 'BackgroundImageIndex': bg}, count)
