@@ -31,9 +31,9 @@ def digits():
 def time_cell(digit):
     raw=digits()[digit]
     # User requested consistent proportions. Preserve the slim silhouette of 1.
-    raw=raw.resize((58 if digit==1 else 66,81),Image.Resampling.LANCZOS)
-    result=Image.new('RGBA',(68,81))
-    result.alpha_composite(raw,((68-raw.width)//2,0))
+    raw=raw.resize((38 if digit==1 else 66,81),Image.Resampling.LANCZOS)
+    result=Image.new('RGBA',(raw.width+2,81))
+    result.alpha_composite(raw,(1,0))
     return result
 
 def small_digit(digit):

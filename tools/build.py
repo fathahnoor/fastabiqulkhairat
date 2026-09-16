@@ -21,7 +21,7 @@ CREAM = (249, 225, 175)
 ARABIC = 'فاستبقوا الخيرات'
 SIZE = 360
 TIME = {'center_x': 180, 'y': 159, 'digit_width': 68, 'height': 81,
-        'colon_width': 22, 'leading_zero': False, 'alignment': 'center'}
+        'colon_width': 22, 'leading_zero': False, 'alignment': 'proportional-follow', 'digit_one_width':40, 'max_center_offset':28}
 
 
 def font(name, size, weight=None):
@@ -159,8 +159,8 @@ def generate():
     for kind in kinds:
         add(source_assets.approved_crop((287,85,410,184),(35,28)) if kind=='partly' else icon(kind,28))
     # The one logical time field compiles to hour + separator + following minute.
-    # Include the complete fixed-width minute pair and colon in the group center.
-    # Minutes have two fixed advances, so the entire HH:MM width is included.
+    # Keep the existing hour anchor; minutes follow proportional sprite advances.
+    # The user accepts up to 28 px left offset to preserve shape and equal padding.
     hour_x = TIME['center_x'] - (TIME['colon_width'] + 2*TIME['digit_width'])//2 - (2*TIME['digit_width']+1)//2
     time = {'Digital': {'HoursMinutesSeconds': [
         {'Type': 0, 'Independent': True,
@@ -219,7 +219,7 @@ def generate():
     (BUILD/'watchface.json').write_text(json.dumps(params, indent=2), encoding='utf-8')
     (ROOT/'design.json').write_text(json.dumps({'name': 'fastabiqulkhairat', 'device': 'Amazfit T-Rex Pro',
         'screen': [360,360], 'arabic': ARABIC, 'time_field': TIME,
-        'compiler': 'hour centered with attached separator and following zero-padded minutes'}, indent=2, ensure_ascii=False), encoding='utf-8')
+        'compiler': 'center-aligned hour anchor, proportional digits, attached separator and following minutes; up to 28 px group center offset accepted by user'}, indent=2, ensure_ascii=False), encoding='utf-8')
     return params, images
 
 
@@ -231,7 +231,7 @@ def text_start(cfg, width, maxdigits, digit_width):
 
 
 def render(params, images, hour=10, minute=47, steps=8327, hr=72, battery=86,
-           day=26, month=8, weekday=0, temp=28, condition=1, idle=False):
+           day=26, month=8, weekday=0, temp=28, condition=1, idle=False, require_center=False):
     mode = params['IdleScreen'] if idle else params
     im = images[mode['BackgroundImageIndex'] if idle else mode['Background']['ImageIndex']].copy()
     fields = mode['Time']['Digital']['HoursMinutesSeconds']
@@ -254,7 +254,8 @@ def render(params, images, hour=10, minute=47, steps=8327, hr=72, battery=86,
         return start, x
     start, end = digits(fields[0]['Text'], hour, 2)
     _, end = digits(fields[1]['Text'], minute, 2, end, fields[0]['Text']['Image']['Y'])
-    assert abs((start+end)/2-180) <= .5, (hour, minute, start, end)
+    if require_center:
+        assert abs((start+end)/2-180) <= .5, (hour, minute, start, end)
     system = mode if idle else mode['System']
     date = system['Date']
     for cfg, offset in [(date['Week']['Text'], weekday), (date['YearMonthDay'][0]['Text'], month-1)]:
@@ -291,7 +292,7 @@ def main():
     atlas=Image.new('RGB',(440,216),(0,0,0))
     for digit in range(10):
         sprite=source_assets.time_cell(digit)
-        assert sprite.size==(68,81)
+        assert sprite.size==((40 if digit==1 else 68),81)
         atlas.paste(sprite,(digit%5*88+10,digit//5*108),sprite)
         ImageDraw.Draw(atlas).text((digit%5*88+39,digit//5*108+87),str(digit),fill=CREAM)
     atlas.save(OUT/'digits-normalized.png')
@@ -346,16 +347,19 @@ def main():
     hbase=hms[0]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
     mbase=hms[1]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
     colon=decoded[hms[0]['Text']['Image']['SuffixImage']['ImageRange']['ImageIndex']]
+    max_center_offset=0
     for hour in range(24):
         for minute in range(60):
             width=sum(decoded[hbase+int(c)].width for c in str(hour))
             tail=colon.width+sum(decoded[mbase+int(c)].width for c in f'{minute:02d}')
             start=text_start(hms[0]['Text'],width,2,decoded[hbase].width)
-            assert start+(width+tail)/2==180
+            offset=180-(start+(width+tail)/2)
+            assert 0<=offset<=28
+            max_center_offset=max(max_center_offset,offset)
             assert 0<=start and start+width+tail<=360
     report = {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'images':len(blobs),
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
-              'centered_time_cases':1440,'digit_cell':[68,81],'digit_one_body_width':58,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
+              'proportional_time_cases':1440,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
               'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET)},'arabic_text':ARABIC,'arabic_source':'unchanged crop from user-approved artwork',
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')

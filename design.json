@@ -13,7 +13,9 @@
     "height": 81,
     "colon_width": 22,
     "leading_zero": false,
-    "alignment": "center"
+    "alignment": "proportional-follow",
+    "digit_one_width": 40,
+    "max_center_offset": 28
   },
-  "compiler": "hour centered with attached separator and following zero-padded minutes"
+  "compiler": "center-aligned hour anchor, proportional digits, attached separator and following minutes; up to 28 px group center offset accepted by user"
 }

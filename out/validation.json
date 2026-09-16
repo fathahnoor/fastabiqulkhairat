@@ -1,22 +1,28 @@
 {
-  "sha256": "c2fca3bd9d6e754652d164f61353473a6bf56b3da10107bad3a530e4023182df",
-  "bytes": 671650,
+  "sha256": "575a44135573eaf500d7cdae78b13856d723e50b69ddf3a814565b0ab9cdd02c",
+  "bytes": 665910,
   "images": 156,
   "container": {
     "device_id": 83,
-    "quicklz_blocks": 480,
+    "quicklz_blocks": 475,
     "decoded_block_bytes": 4096,
-    "raw_tail_bytes": 1563,
+    "raw_tail_bytes": 3899,
     "format_marker": 1
   },
   "parameter_roundtrip": true,
   "max_pixel_delta": 0,
-  "centered_time_cases": 1440,
+  "proportional_time_cases": 1440,
+  "max_center_offset_px": 28.0,
   "digit_cell": [
     68,
     81
   ],
-  "digit_one_body_width": 58,
+  "digit_one_cell": [
+    40,
+    81
+  ],
+  "digit_one_body_width": 38,
+  "digit_padding_px": 1,
   "aod_metric_cell": [
     14,
     18
