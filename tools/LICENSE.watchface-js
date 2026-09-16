@@ -1,0 +1,13 @@
+Skema parameter UIHH_GT2, template header 88-byte, dan algoritma dekompresi
+chunk yang dipakai tools/trexpro_wf.py diadaptasi dari proyek:
+
+  watchface-js oleh Nadeflore - https://github.com/Nadeflore/watchface-js
+  Lisensi: GNU General Public License v3.0 (GPL-3.0-only)
+
+Implementasi encode/decode di trexpro_wf.py ditulis ulang dalam Python;
+format binernya sendiri adalah hasil rekayasa komunitas dan dipakai di sini
+hanya untuk interoperabilitas (membuat file .bin yang kompatibel).
+
+File .bin referensi yang dipakai untuk validasi berasal dari katalog komunitas
+amazfitwatchfaces.com (diunduh sebagai sampel, tidak didistribusikan ulang
+di repo ini).

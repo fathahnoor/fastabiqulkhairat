@@ -1,0 +1,19 @@
+{
+  "name": "fastabiqulkhairat",
+  "device": "Amazfit T-Rex Pro",
+  "screen": [
+    360,
+    360
+  ],
+  "arabic": "فاستبقوا الخيرات",
+  "time_field": {
+    "center_x": 180,
+    "y": 176,
+    "digit_width": 58,
+    "height": 80,
+    "colon_width": 16,
+    "leading_zero": false,
+    "alignment": "center"
+  },
+  "compiler": "hour centered with attached separator and following zero-padded minutes"
+}

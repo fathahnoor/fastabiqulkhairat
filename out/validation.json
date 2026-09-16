@@ -1,0 +1,18 @@
+{
+  "sha256": "c33ef7b3dd7c897b483416a956323dd893a14370e3832c6463a44a58887139ff",
+  "bytes": 733379,
+  "images": 145,
+  "container": {
+    "device_id": 83,
+    "quicklz_blocks": 483,
+    "decoded_block_bytes": 4096,
+    "raw_tail_bytes": 1498,
+    "format_marker": 1
+  },
+  "parameter_roundtrip": true,
+  "max_pixel_delta": 0,
+  "centered_time_cases": 1440,
+  "arabic_text": "فاستبقوا الخيرات",
+  "arabic_shaping": "Pillow RAQM / HarfBuzz",
+  "device_test": "Pending physical T-Rex Pro installation"
+}
