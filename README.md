@@ -16,13 +16,15 @@ Watchface Amazfit T-Rex Pro 360 x 360, memakai kaligrafi dan aset visual yang di
 
 Gambar sumber disimpan tanpa perubahan. Build memeriksa hash sumber dan kesamaan piksel area kaligrafi pada latar 360 x 360. File font Noto Kufi Arabic dan Oxanium serta tekstur generasi lama masih tersimpan untuk riwayat, tetapi tidak dipakai untuk kaligrafi atau jam pada build ini.
 
-## Waktu proporsional
+## Satu field waktu, rata tengah
 
-Koreksi pengguna mengutamakan bentuk asli dan jarak proporsional. Angka 1 tetap ramping, dengan margin transparan 1 px per sisi seperti digit lain. Jam tanpa nol awal dan menit selalu dua digit.
+`design.json` mendefinisikan satu `time_field` dengan `alignment: Center` dan `center_x: 180`. `compile_time_field()` menerjemahkannya ke komponen terkait yang diwajibkan UIHH: jam, suffix titik dua, dan menit dengan `Independent: false`. Komponen menit tidak memiliki posisi terpisah yang dipatok.
 
-UIHH v2 memakai jam berperataan `Center`, titik dua sebagai `SuffixImage`, dan menit `Independent: false`. Menit mengikuti lebar aktual gambar digit. Bentuk 1 tidak diperlebar untuk mengisi sel digit lain.
+Renderer menyusun seluruh glyph jam, titik dua, dan menit terlebih dahulu. Lebar grup dihitung dari ukuran aktual aset, termasuk angka 1 yang bersel 40 px. Posisi kiri dihitung dari `(360 - lebar_grup) / 2`. Contoh: 5:11 dimulai pada x=95, 11:11 pada x=89, dan 21:10 pada x=61. Semuanya berpusat pada x=180. Build memeriksa 2.880 skenario normal dan AOD.
 
-Batas format: perataan jam memakai jangkar awal yang tetap, sehingga grup waktu bergeser 14 px ke kiri jika menit memuat satu angka 1, atau 28 px jika menitnya 11. Pengguna secara eksplisit memilih bentuk dan jarak proporsional daripada rata tengah yang ketat. Build menguji batas ini pada 1.440 kombinasi waktu, bukan mengklaim semuanya tepat berpusat. Lihat `out/spacing-aod-review.png` untuk contoh 5:11, 11:11, dan 21:10.
+**Koreksi atas laporan sebelumnya:** pergeseran 14/28 px berasal dari model preview yang hanya memusatkan jam. Itu belum membuktikan batas firmware. [Pengembang editor SashaCX75](https://amazfitwatchfaces.com/forum/viewtopic.php?p=13168) memperingatkan bahwa preview Center/Right bersama Follow tidak akurat dan perlu diperiksa pada jam.
+
+Parameter native jam `Center` dan menit `Follow` sudah ada pada binary sebelumnya. Revisi pengelompokan ini membetulkan renderer dan sumber konfigurasi, tanpa mengklaim mengubah perilaku firmware. Binary tetap identik dengan revisi 81df71f. Model preview seluruh grup kini terpusat, tetapi perataan pada firmware belum diverifikasi. `out/validation.json` memisahkan verifikasi preview dari `firmware_centering_verified`.
 
 ## Build dan validasi
 

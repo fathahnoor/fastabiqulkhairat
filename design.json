@@ -13,9 +13,9 @@
     "height": 81,
     "colon_width": 22,
     "leading_zero": false,
-    "alignment": "proportional-follow",
+    "alignment": "Center",
     "digit_one_width": 40,
-    "max_center_offset": 28
+    "field_width": 294
   },
-  "compiler": "center-aligned hour anchor, proportional digits, attached separator and following minutes; up to 28 px group center offset accepted by user"
+  "compiler": "one Center time field compiled to native linked hour, suffix and following minute components"
 }

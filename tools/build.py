@@ -21,7 +21,7 @@ CREAM = (249, 225, 175)
 ARABIC = 'فاستبقوا الخيرات'
 SIZE = 360
 TIME = {'center_x': 180, 'y': 159, 'digit_width': 68, 'height': 81,
-        'colon_width': 22, 'leading_zero': False, 'alignment': 'proportional-follow', 'digit_one_width':40, 'max_center_offset':28}
+        'colon_width': 22, 'leading_zero': False, 'alignment': 'Center', 'digit_one_width':40, 'field_width':294}
 
 
 def font(name, size, weight=None):
@@ -126,6 +126,45 @@ def number(x, y, index, count=10, align='Left', zero=0, suffix=None):
     return {'Image': node, 'Alignment': align, 'Spacing': 0, 'ZeroPadding': zero}
 
 
+def compile_time_field(field, digits_index, colon_index):
+    left=field['center_x']-field['field_width']//2
+    return {'Digital': {'HoursMinutesSeconds': [
+        {'Type': 0, 'Independent': True,
+         'Text': number(left,field['y'],digits_index,align=field['alignment'],suffix=colon_index)},
+        {'Type': 1, 'Independent': False,
+         'Text': number(0,0,digits_index,zero=1)}]}}
+
+
+def time_group_layout(block, images, hour, minute):
+    """Model the intended native linked group, not the editor's hour-only preview.
+
+    The editor author warns that Center+Follow preview is inaccurate. This is
+    a group-layout model; physical firmware confirmation is recorded separately.
+    """
+    fields=block['Digital']['HoursMinutesSeconds']
+    assert fields[0]['Independent'] and not fields[1]['Independent']
+    parts=[]
+    for field,value in zip(fields,(hour,minute)):
+        cfg=field['Text']; node=cfg['Image']
+        base=node['ImageRange']['ImageRange']['ImageIndex']
+        text=str(value).zfill(2) if cfg.get('ZeroPadding') else str(value)
+        parts.extend(images[base+int(ch)] for ch in text)
+        if 'SuffixImage' in node:
+            parts.append(images[node['SuffixImage']['ImageRange']['ImageIndex']])
+    cfg=fields[0]['Text']; node=cfg['Image']
+    width=sum(im.width for im in parts)
+    hbase=node['ImageRange']['ImageRange']['ImageIndex']
+    mbase=fields[1]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
+    separator=images[node['SuffixImage']['ImageRange']['ImageIndex']].width
+    reserved=2*images[hbase].width+separator+2*images[mbase].width
+    left=node['X']
+    if cfg['Alignment']=='Center':
+        left+=(reserved-width)//2
+    elif cfg['Alignment']=='Right':
+        left+=reserved-width
+    return left,node['Y'],parts
+
+
 def generate():
     images = []
     def add(im):
@@ -158,14 +197,8 @@ def generate():
              'cloud', 'rain', 'sun', 'cloud', 'cloud']
     for kind in kinds:
         add(source_assets.approved_crop((287,85,410,184),(35,28)) if kind=='partly' else icon(kind,28))
-    # The one logical time field compiles to hour + separator + following minute.
-    # Keep the existing hour anchor; minutes follow proportional sprite advances.
-    # The user accepts up to 28 px left offset to preserve shape and equal padding.
-    hour_x = TIME['center_x'] - (TIME['colon_width'] + 2*TIME['digit_width'])//2 - (2*TIME['digit_width']+1)//2
-    time = {'Digital': {'HoursMinutesSeconds': [
-        {'Type': 0, 'Independent': True,
-         'Text': number(hour_x, TIME['y'], big, align='Center', suffix=colon_id)},
-        {'Type': 1, 'Independent': False, 'Text': number(0, 0, big, zero=1)}]}}
+    # One logical time field compiled into the linked components required by UIHH.
+    time = compile_time_field(TIME, big, colon_id)
     date = {'YearMonthDay': [
         {'Type': 1, 'Independent': True, 'Text': number(241,55,months,12)},
         {'Type': 2, 'Independent': True, 'Text': number(276,55,small,zero=1)}],
@@ -219,7 +252,7 @@ def generate():
     (BUILD/'watchface.json').write_text(json.dumps(params, indent=2), encoding='utf-8')
     (ROOT/'design.json').write_text(json.dumps({'name': 'fastabiqulkhairat', 'device': 'Amazfit T-Rex Pro',
         'screen': [360,360], 'arabic': ARABIC, 'time_field': TIME,
-        'compiler': 'center-aligned hour anchor, proportional digits, attached separator and following minutes; up to 28 px group center offset accepted by user'}, indent=2, ensure_ascii=False), encoding='utf-8')
+        'compiler': 'one Center time field compiled to native linked hour, suffix and following minute components'}, indent=2, ensure_ascii=False), encoding='utf-8')
     return params, images
 
 
@@ -231,10 +264,9 @@ def text_start(cfg, width, maxdigits, digit_width):
 
 
 def render(params, images, hour=10, minute=47, steps=8327, hr=72, battery=86,
-           day=26, month=8, weekday=0, temp=28, condition=1, idle=False, require_center=False):
+           day=26, month=8, weekday=0, temp=28, condition=1, idle=False):
     mode = params['IdleScreen'] if idle else params
     im = images[mode['BackgroundImageIndex'] if idle else mode['Background']['ImageIndex']].copy()
-    fields = mode['Time']['Digital']['HoursMinutesSeconds']
     def digits(cfg, value, maxdigits, forced_x=None, forced_y=None):
         node = cfg['Image']
         base = node['ImageRange']['ImageRange']['ImageIndex']
@@ -252,10 +284,12 @@ def render(params, images, hour=10, minute=47, steps=8327, hr=72, battery=86,
             im.alpha_composite(p, (x,y))
             x += p.width
         return start, x
-    start, end = digits(fields[0]['Text'], hour, 2)
-    _, end = digits(fields[1]['Text'], minute, 2, end, fields[0]['Text']['Image']['Y'])
-    if require_center:
-        assert abs((start+end)/2-180) <= .5, (hour, minute, start, end)
+    start,y,parts=time_group_layout(mode['Time'],images,hour,minute)
+    end=start
+    for part in parts:
+        im.alpha_composite(part,(end,y))
+        end+=part.width
+    assert abs((start+end)/2-180)<=.5
     system = mode if idle else mode['System']
     date = system['Date']
     for cfg, offset in [(date['Week']['Text'], weekday), (date['YearMonthDay'][0]['Text'], month-1)]:
@@ -344,22 +378,22 @@ def main():
     assert hms[0]['Independent'] and not hms[1]['Independent']
     assert hms[0]['Text']['Alignment']=='Center'
     assert not hms[0]['Text']['ZeroPadding'] and hms[1]['Text']['ZeroPadding']==1
-    hbase=hms[0]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
-    mbase=hms[1]['Text']['Image']['ImageRange']['ImageRange']['ImageIndex']
-    colon=decoded[hms[0]['Text']['Image']['SuffixImage']['ImageRange']['ImageIndex']]
     max_center_offset=0
-    for hour in range(24):
-        for minute in range(60):
-            width=sum(decoded[hbase+int(c)].width for c in str(hour))
-            tail=colon.width+sum(decoded[mbase+int(c)].width for c in f'{minute:02d}')
-            start=text_start(hms[0]['Text'],width,2,decoded[hbase].width)
-            offset=180-(start+(width+tail)/2)
-            assert 0<=offset<=28
-            max_center_offset=max(max_center_offset,offset)
-            assert 0<=start and start+width+tail<=360
+    for mode in (roundtrip['Time'],roundtrip['IdleScreen']['Time']):
+        for hour in range(24):
+            for minute in range(60):
+                start,_,parts=time_group_layout(mode,decoded,hour,minute)
+                width=sum(im.width for im in parts)
+                offset=abs(180-(start+width/2))
+                assert offset<=.5
+                assert 0<=start and start+width<=360
+                max_center_offset=max(max_center_offset,offset)
+    for (hour,minute),expected_left in {(5,11):95,(11,11):89,(21,10):61,(23,59):33}.items():
+        left,_,_=time_group_layout(roundtrip['Time'],decoded,hour,minute)
+        assert left==expected_left,(hour,minute,left)
     report = {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'images':len(blobs),
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
-              'proportional_time_cases':1440,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
+              'group_center_preview_cases':2880,'firmware_centering_verified':False,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
               'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET)},'arabic_text':ARABIC,'arabic_source':'unchanged crop from user-approved artwork',
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')

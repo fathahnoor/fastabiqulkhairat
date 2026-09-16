@@ -11,8 +11,9 @@
   },
   "parameter_roundtrip": true,
   "max_pixel_delta": 0,
-  "proportional_time_cases": 1440,
-  "max_center_offset_px": 28.0,
+  "group_center_preview_cases": 2880,
+  "firmware_centering_verified": false,
+  "max_center_offset_px": 0,
   "digit_cell": [
     68,
     81
