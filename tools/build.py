@@ -119,11 +119,11 @@ def localized(index, count=1):
     return {'Language': 2, 'ImageRange': {'ImageIndex': index, 'ImagesCount': count}}
 
 
-def number(x, y, index, count=10, align='Left', zero=0, suffix=None):
+def number(x, y, index, count=10, align='Left', zero=0, suffix=None, unknown6=0):
     node = {'X': x, 'Y': y, 'ImageRange': localized(index, count)}
     if suffix is not None:
         node['SuffixImage'] = localized(suffix)
-    return {'Image': node, 'Alignment': align, 'Spacing': 0, 'ZeroPadding': zero}
+    return {'Image': node, 'Alignment': align, 'Spacing': 0, 'ZeroPadding': zero, 'Unknown6': unknown6}
 
 
 def compile_time_field(field, digits_index, colon_index):
@@ -200,9 +200,9 @@ def generate():
     # One logical time field compiled into the linked components required by UIHH.
     time = compile_time_field(TIME, big, colon_id)
     date = {'YearMonthDay': [
-        {'Type': 1, 'Independent': True, 'Text': number(241,55,months,12)},
+        {'Type': 1, 'Independent': True, 'Text': number(241,55,months,12,unknown6=1)},
         {'Type': 2, 'Independent': True, 'Text': number(276,55,small,zero=1)}],
-        'Week': {'Independent': True, 'Text': number(244,35,weekdays,7)}}
+        'Week': {'Independent': True, 'Text': number(244,35,weekdays,7,unknown6=1)}}
     data = []
     for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('HeartRate',180,3,None),('Battery',270,3,pct)]:
         x = cx-(maxdigits*11+1)//2-(7 if suffix else 0)

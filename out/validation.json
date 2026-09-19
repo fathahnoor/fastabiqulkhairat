@@ -1,12 +1,12 @@
 {
-  "sha256": "575a44135573eaf500d7cdae78b13856d723e50b69ddf3a814565b0ab9cdd02c",
-  "bytes": 665910,
+  "sha256": "da2aec2150737b92b0b977d63234c59fb66d8e07ef64b5469b6c44fe91d34ce0",
+  "bytes": 665806,
   "images": 156,
   "container": {
     "device_id": 83,
     "quicklz_blocks": 475,
     "decoded_block_bytes": 4096,
-    "raw_tail_bytes": 3899,
+    "raw_tail_bytes": 3935,
     "format_marker": 1
   },
   "parameter_roundtrip": true,
