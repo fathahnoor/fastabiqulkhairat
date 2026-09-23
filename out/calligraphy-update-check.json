@@ -1,0 +1,15 @@
+{
+  "before_sha256": "da2aec2150737b92b0b977d63234c59fb66d8e07ef64b5469b6c44fe91d34ce0",
+  "after_sha256": "5b3e75de0818c40a812da07f501a66b1a6e5e2dcc09ecee5cd034ee89f2442a6",
+  "parameters_unchanged": true,
+  "changed_image_indices": [
+    0,
+    72,
+    155
+  ],
+  "outside_calligraphy_pixel_delta": 0,
+  "aod_rgb_sum_before": 7936777.0,
+  "aod_rgb_sum_after": 7296565.0,
+  "aod_rgb_sum_reduction_percent": 8.07,
+  "battery_saving_measured": false
+}

@@ -1,7 +1,7 @@
 # Desain final Fastabiqulkhairat
 
 Sumber kanonis:
-- `reference/approved-design.png`: desain final pengguna, jangan ubah kaligrafi, ornamen, ikon metrik, atau label statis.
+- `reference/approved-design.png`: desain final pengguna, sumber ornamen, ikon metrik, dan label statis. Kaligrafi diganti atas instruksi 24 September 2026.
 - `reference/digits-approved.jpg`: digit lengkap dari pengguna. Pilih angka 4 dengan lipatan pada baris kedua.
 
 Koreksi pengguna berikutnya: "beberapa angka proporsinya masih tidak seragam, kamu rapikan juga ya". Ini mengizinkan normalisasi proporsi digit tanpa mengganti bentuk dasar, tekstur emas, atau font sumber.
@@ -10,7 +10,7 @@ Implementasi saat ini:
 - Pemotongan aset deterministik ada di `tools/source_assets.py`.
 - Digit besar memakai badan 66 x 81 px, kecuali angka 1 yang tetap 38 x 81 px. Margin transparan semua digit 1 px per sisi; sel angka 1 adalah 40 x 81 px dan digit lain 68 x 81 px.
 - Instruksi terbaru: seluruh jam, titik dua, dan menit harus diperlakukan sebagai satu field dengan alignment Center. `time_group_layout()` menghitung lebar semua komponen sebelum menentukan posisi kiri. Jangan kembali ke perataan jam saja.
-- Kaligrafi berasal langsung dari latar desain final. Build memeriksa kesamaan piksel pada area kaligrafi setelah skala layar.
+- Kaligrafi memakai `reference/calligraphy-approved-20260923.jpeg`. Latar putih diekstrak, rasio aspek dipertahankan pada lebar 250 px, lalu digabung ke latar hitam dalam area (48,89)-(303,145). Jangan menggambar ulang huruf.
 - `tools/build.py` membangun versi desain final; binary lama sudah digantikan setelah validasi.
 - Digit kecil yang tersedia, MON, AUG, dan ikon partly cloudy diekstrak. Karakter tanggal/hari lain serta kondisi cuaca lain memakai aset pendukung karena sumber lengkap tidak tersedia.
 

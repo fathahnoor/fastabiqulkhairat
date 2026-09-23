@@ -44,13 +44,15 @@ yang ingin mengutak-atik desainnya sendiri.
 
 ## Desain dan aset
 
-- `reference/approved-design.png`: desain final pengguna. Kaligrafi, ornamen, garis, ikon metrik, dan label diambil langsung dari gambar ini. Tidak diketik ulang atau digambar ulang.
+Kaligrafi diperbarui 24 September 2026 dari `reference/calligraphy-approved-20260923.jpeg`. Bentuk huruf dan proporsi sumber dipertahankan, latar putih dihapus, lalu artwork digabung ke bitmap latar agar tidak menambah komponen runtime. Area selain kaligrafi tetap identik. [Verifikasi perubahan](out/calligraphy-update-check.json).
+
+- `reference/approved-design.png`: desain final pengguna. Ornamen, garis, ikon metrik, dan label diambil langsung dari gambar ini. Tidak diketik ulang atau digambar ulang.
 - `reference/digits-approved.jpg`: lembar digit pengguna. Seluruh digit besar diambil dari lembar ini; angka 4 memakai varian lipatan pada baris kedua.
 - Proporsi badan digit memakai tinggi 81 px dan lebar 66 px, kecuali angka 1 yang tetap ramping pada 38 px. Semua aset memiliki margin transparan 1 px di kiri dan kanan: sel 68 x 81 px untuk digit lain dan 40 x 81 px untuk angka 1. Jarak dirapikan dengan memangkas padding, bukan melebarkan bentuk angka 1.
 - Titik dua berasal dari desain final. Area angka statis dibersihkan menggunakan tekstur gelap dari gambar yang sama, lalu diisi aset dinamis.
 - Digit kecil yang tersedia di desain dipotong langsung; digit kecil lainnya berasal dari lembar digit. MON dan AUG juga dipotong langsung. Nama hari/bulan lain memakai font pendukung Rajdhani, sedangkan kondisi cuaca lain memakai ikon programatis karena aset lengkapnya tidak terdapat dalam lampiran.
 
-Gambar sumber disimpan tanpa perubahan. Build memeriksa hash sumber dan kesamaan piksel area kaligrafi pada latar 360 x 360. File font Noto Kufi Arabic dan Oxanium serta tekstur generasi lama masih tersimpan untuk riwayat, tetapi tidak dipakai untuk kaligrafi atau jam pada build ini.
+Gambar sumber disimpan tanpa perubahan. Build memeriksa hash sumber dan kesamaan piksel panel kaligrafi hasil ekstraksi pada latar 360 x 360. File font Noto Kufi Arabic dan Oxanium serta tekstur generasi lama masih tersimpan untuk riwayat, tetapi tidak dipakai untuk kaligrafi atau jam pada build ini.
 
 ## Satu field waktu, rata tengah
 
@@ -60,7 +62,7 @@ Renderer menyusun seluruh glyph jam, titik dua, dan menit terlebih dahulu. Lebar
 
 **Koreksi atas laporan sebelumnya:** pergeseran 14/28 px berasal dari model preview yang hanya memusatkan jam. Itu belum membuktikan batas firmware. [Pengembang editor SashaCX75](https://amazfitwatchfaces.com/forum/viewtopic.php?p=13168) memperingatkan bahwa preview Center/Right bersama Follow tidak akurat dan perlu diperiksa pada jam.
 
-Parameter native jam `Center` dan menit `Follow` sudah ada pada binary sebelumnya. Revisi pengelompokan ini membetulkan renderer dan sumber konfigurasi, tanpa mengklaim mengubah perilaku firmware. Binary tetap identik dengan revisi 81df71f. Model preview seluruh grup kini terpusat, tetapi perataan pada firmware belum diverifikasi. `out/validation.json` memisahkan verifikasi preview dari `firmware_centering_verified`.
+Parameter native jam `Center` dan menit `Follow` sudah ada pada binary sebelumnya. Revisi pengelompokan ini membetulkan renderer dan sumber konfigurasi, tanpa mengklaim mengubah perilaku firmware. Pernyataan binary identik dengan revisi 81df71f berlaku pada revisi perataan tersebut; pembaruan kaligrafi menghasilkan binary baru. Model preview seluruh grup kini terpusat, tetapi perataan pada firmware belum diverifikasi. `out/validation.json` memisahkan verifikasi preview dari `firmware_centering_verified`.
 
 ## Build dan validasi
 

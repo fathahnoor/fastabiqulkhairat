@@ -111,7 +111,7 @@ def icon(kind, size=24):
 
 
 def background():
-    source_assets.approved_crop((178,309,1053,504)).save(OUT/'calligraphy.png')
+    source_assets.calligraphy().save(OUT/'calligraphy.png')
     return source_assets.background()
 
 
@@ -319,9 +319,8 @@ def main():
     BUILD.mkdir(exist_ok=True)
     OUT.mkdir(exist_ok=True)
     p, images = generate()
-    approved=Image.open(source_assets.SRC).convert('RGBA').resize((360,360),Image.Resampling.LANCZOS)
-    region=(48,89,303,145)
-    delta=ImageChops.difference(images[0].crop(region),approved.crop(region))
+    region=source_assets.CALLIGRAPHY_REGION
+    delta=ImageChops.difference(images[0].crop(region),source_assets.calligraphy_panel())
     assert max(channel[1] for channel in delta.getextrema())==0, 'Calligraphy changed'
     atlas=Image.new('RGB',(440,216),(0,0,0))
     for digit in range(10):
@@ -394,7 +393,7 @@ def main():
     report = {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'images':len(blobs),
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
               'group_center_preview_cases':2880,'firmware_centering_verified':False,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
-              'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET)},'arabic_text':ARABIC,'arabic_source':'unchanged crop from user-approved artwork',
+              'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET,source_assets.CALLIGRAPHY)},'arabic_text':ARABIC,'arabic_source':'user-supplied 20260923 artwork, white matte removed, aspect ratio preserved',
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
     print(json.dumps(report,indent=2))

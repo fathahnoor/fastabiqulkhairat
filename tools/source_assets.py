@@ -5,6 +5,35 @@ from PIL import Image, ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'reference/approved-design.png'
 SHEET=ROOT/'reference/digits-approved.jpg'
+CALLIGRAPHY=ROOT/'reference/calligraphy-approved-20260923.jpeg'
+CALLIGRAPHY_REGION=(48,89,303,145)
+
+@cache
+def calligraphy():
+    # Extract supplied gold artwork from its white matte, without redrawing glyphs.
+    im=Image.open(CALLIGRAPHY).convert('RGB')
+    pixels=[]
+    for r,g,b in im.getdata():
+        chroma=max(r,g,b)-min(r,g,b)
+        alpha=max(0,min(255,round((chroma-10)*255/35)))
+        if alpha:
+            rgb=tuple(max(0,min(255,round((v-255*(1-alpha/255))/(alpha/255)))) for v in (r,g,b))
+            pixels.append((*rgb,alpha))
+        else:
+            pixels.append((0,0,0,0))
+    cut=Image.new('RGBA',im.size)
+    cut.putdata(pixels)
+    cut=cut.crop(cut.getbbox())
+    width=250
+    return cut.resize((width,round(cut.height*width/cut.width)),Image.Resampling.LANCZOS)
+
+def calligraphy_panel():
+    x0,y0,x1,y1=CALLIGRAPHY_REGION
+    panel=Image.new('RGBA',(x1-x0,y1-y0),(0,0,0,255))
+    art=calligraphy()
+    assert art.width<=panel.width and art.height<=panel.height
+    panel.alpha_composite(art,(180-x0-art.width//2,(panel.height-art.height)//2))
+    return panel
 
 def extract(im, box):
     crop=im.crop(tuple(round(v) for v in box)).convert('RGBA')
@@ -64,4 +93,6 @@ def background():
     ImageDraw.Draw(mask).ellipse((0,0,359,359),fill=255)
     base=Image.new('RGBA',(360,360),(0,0,0,255))
     base.paste(out,(0,0),mask)
+    # Bake into the existing background: no extra runtime image/widget or redraw.
+    base.paste(calligraphy_panel(),CALLIGRAPHY_REGION[:2])
     return base

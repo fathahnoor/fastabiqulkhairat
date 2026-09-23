@@ -1,5 +1,14 @@
 # Audit teknis AOD, 17 September 2026
 
+Pembaruan 24 September 2026: kaligrafi diganti dengan gambar terbaru pengguna.
+Deduplicasi aset tetap aktif pada kandidat optimized. Build terkini menghasilkan
+650.214 byte (standar) dan 615.525 byte (optimized). Jumlah gambar logis tetap 156.
+Pada skenario AOD 5:11, jumlah kanal RGB turun 8,07% dari build sebelum penggantian;
+ini metrik gambar, bukan persentase penghematan baterai. Tidak ada perubahan piksel
+di luar panel kaligrafi atau perubahan parameter runtime. Angka tabel di bawah
+adalah hasil audit awal 17 September; hasil terkini ada di `out/power-audit.json`.
+
+
 Pengguna selalu memakai AOD dan melaporkan baterai boros. Belum ada angka
 penurunan baterai per jam atau hash binary yang terpasang. Audit ini menghasilkan
 kandidat optimasi penyimpanan yang mempertahankan tampilan, belum membuktikan
@@ -54,7 +63,7 @@ tidak ada pengurangan emisi layar yang direncanakan.
 Kompresi memakai format QuickLZ dan ukuran blok lama. Format gambar BGRA32 yang
 sudah dipakai tetap dipertahankan. Shared offset dapat dibaca oleh kedua decoder
 desktop, tetapi penerimaan firmware harus diuji pada jam. Kandidat karena itu
-disimpan terpisah dari binary utama, yang tetap byte-identik dengan baseline.
+disimpan terpisah dari binary utama, yang memakai parameter dan gambar identik dengan kandidat pada build yang sama.
 
 ## Artefak dan verifikasi
 

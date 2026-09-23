@@ -1,6 +1,6 @@
 {
-  "sha256": "da2aec2150737b92b0b977d63234c59fb66d8e07ef64b5469b6c44fe91d34ce0",
-  "bytes": 665806,
+  "sha256": "5b3e75de0818c40a812da07f501a66b1a6e5e2dcc09ecee5cd034ee89f2442a6",
+  "bytes": 650214,
   "images": 156,
   "container": {
     "device_id": 83,
@@ -32,9 +32,10 @@
   "calligraphy_pixel_delta": 0,
   "source_sha256": {
     "reference\\approved-design.png": "19bb9952bea6322dce139f75c94f0a006742b61e82089096acbb431c25b8b937",
-    "reference\\digits-approved.jpg": "628b02b0eb730c9dfc1a6a995fec8e725304eca76b212e5072e0c56bef160995"
+    "reference\\digits-approved.jpg": "628b02b0eb730c9dfc1a6a995fec8e725304eca76b212e5072e0c56bef160995",
+    "reference\\calligraphy-approved-20260923.jpeg": "2da9e07a51fb91982019626832b72a13674d735414cf6ab452e5df9c93576e28"
   },
   "arabic_text": "فاستبقوا الخيرات",
-  "arabic_source": "unchanged crop from user-approved artwork",
+  "arabic_source": "user-supplied 20260923 artwork, white matte removed, aspect ratio preserved",
   "device_test": "Pending physical T-Rex Pro installation"
 }
