@@ -1,8 +1,8 @@
 {
-  "baseline_sha256": "9f903f8ba2f9f1f048bc02182714ce4d03e84f9f7f722e773323a4d08a8a6156",
-  "candidate_sha256": "9f903f8ba2f9f1f048bc02182714ce4d03e84f9f7f722e773323a4d08a8a6156",
-  "baseline_bytes": 615848,
-  "candidate_bytes": 615848,
+  "baseline_sha256": "446b7f4bba2c0a400b7c255571b375c0ca899ad7be18fe4ef65faa0d537108d0",
+  "candidate_sha256": "446b7f4bba2c0a400b7c255571b375c0ca899ad7be18fe4ef65faa0d537108d0",
+  "baseline_bytes": 615474,
+  "candidate_bytes": 615474,
   "file_bytes_saved": 0,
   "file_reduction_percent": 0.0,
   "expanded_body_before_bytes": 1799290,

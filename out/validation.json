@@ -1,6 +1,6 @@
 {
-  "sha256": "9f903f8ba2f9f1f048bc02182714ce4d03e84f9f7f722e773323a4d08a8a6156",
-  "bytes": 615848,
+  "sha256": "446b7f4bba2c0a400b7c255571b375c0ca899ad7be18fe4ef65faa0d537108d0",
+  "bytes": 615474,
   "images": 116,
   "container": {
     "device_id": 83,
@@ -37,6 +37,8 @@
     41,
     14
   ],
+  "month_weekday_font_size": 22,
+  "month_weekday_cap_height": 14,
   "month_weekday_center_x": [
     90,
     270

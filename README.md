@@ -50,7 +50,7 @@ Kaligrafi diperbarui 24 September 2026 dari `reference/calligraphy-approved-2026
 - `reference/digits-approved.jpg`: lembar digit pengguna. Seluruh digit besar diambil dari lembar ini; angka 4 memakai varian lipatan pada baris kedua.
 - Proporsi badan digit memakai tinggi 81 px dan lebar 66 px, kecuali angka 1 yang tetap ramping pada 38 px. Semua aset memiliki margin transparan 1 px di kiri dan kanan: sel 68 x 81 px untuk digit lain dan 40 x 81 px untuk angka 1. Jarak dirapikan dengan memangkas padding, bukan melebarkan bentuk angka 1.
 - Titik dua berasal dari desain final. Area angka statis dibersihkan menggunakan tekstur gelap dari gambar yang sama, lalu diisi aset dinamis.
-- Digit kecil yang tersedia di desain dipotong langsung; digit kecil lainnya berasal dari lembar digit. MON dipotong langsung, AUG diskalakan agar tinggi seragam, nama hari/bulan lain memakai font pendukung Rajdhani. Indikator cuaca dihapus; area bekasnya dikosongkan ke tekstur gelap.
+- Digit kecil yang tersedia di desain dipotong langsung; digit kecil lainnya berasal dari lembar digit. Seluruh nama bulan dan hari dirender dengan font Rajdhani pada ukuran yang sama persis. Indikator cuaca dihapus; area bekasnya dikosongkan ke tekstur gelap.
 
 Gambar sumber disimpan tanpa perubahan. Build memeriksa hash sumber dan kesamaan piksel panel kaligrafi hasil ekstraksi pada latar 360 x 360. File font Noto Kufi Arabic dan Oxanium serta tekstur generasi lama masih tersimpan untuk riwayat, tetapi tidak dipakai untuk kaligrafi atau jam pada build ini.
 
