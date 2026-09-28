@@ -41,15 +41,17 @@ def main():
     assert set(idle) == {'Time', 'Date', 'Data', 'BackgroundImageIndex'}
     assert [entry['Type'] for entry in idle['Time']['Digital']['HoursMinutesSeconds']] == [0, 1]
     assert [entry['Type'] for entry in idle['Data']] == [
-        'Steps', 'HeartRate', 'Battery', 'Weather', 'Weather']
+        'Steps', 'HeartRate', 'Battery']
 
     candidate = pack(params, images, compress=True, deduplicate_images=True)
     after_container = validate_trexpro_container(candidate)
     after_params, after_images, _ = unpack(candidate)
     assert after_params == params
-    assert after_images == images  # Includes every weather state, alpha, and preview.
+    assert after_images == images  # Includes every alpha and preview image.
     validate_image_references(ids_to_names(after_params), after_images)
-    assert len(candidate) < len(baseline)
+    # Deduplikasi hanya menghemat bila ada blob identik (dulu banyak ikon
+    # cuaca kembar; kini aset umumnya unik sehingga kandidat bisa sama besar).
+    assert len(candidate) <= len(baseline)
     (OUT / 'fastabiqulkhairat-optimized.bin').write_bytes(candidate)
 
     aod_ids = referenced_images(idle)

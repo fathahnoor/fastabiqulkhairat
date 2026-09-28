@@ -1,8 +1,9 @@
 # Audit teknis AOD, 17 September 2026
 
-Pembaruan 24 September 2026: kaligrafi diganti dengan gambar terbaru pengguna.
-Deduplicasi aset tetap aktif pada kandidat optimized. Build terkini menghasilkan
-650.214 byte (standar) dan 615.525 byte (optimized). Jumlah gambar logis tetap 156.
+Pembaruan terkini: indikator cuaca (ikon + suhu) dihapus dan baris atas
+menjadi Bulan-Hari-Tanggal proporsional. Build terkini menghasilkan
+595.638 byte (standar dan optimized, identik karena seluruh 96 gambar
+logis kini unik). Jumlah gambar logis turun dari 156 ke 96.
 Pada skenario AOD 5:11, jumlah kanal RGB turun 8,07% dari build sebelum penggantian;
 ini metrik gambar, bukan persentase penghematan baterai. Tidak ada perubahan piksel
 di luar panel kaligrafi atau perubahan parameter runtime. Angka tabel di bawah
@@ -27,7 +28,7 @@ Audit parameter AOD menunjukkan:
 - Waktu memuat jam dan menit saja. Tidak ada komponen detik atau animasi.
 - Kaligrafi, garis, ornamen, ikon metrik dan label sudah digabung ke satu bitmap latar.
 - Skala gambar dan transformasi kecerahan sudah dihitung saat build.
-- Langkah, BPM, baterai, suhu, cuaca, hari dan tanggal tetap terhubung ke data firmware.
+- Langkah, BPM, baterai, hari, bulan dan tanggal tetap terhubung ke data firmware.
 - Skema UIHH yang tersedia di project tidak menyediakan kontrol refresh tervalidasi.
   Tidak ditambahkan field interval rekaan atau flag firmware yang belum diketahui.
 
@@ -42,7 +43,7 @@ atau polling berlebihan berasal dari watchface.
 `pack(..., deduplicate_images=True)` mengindeks blob gambar berdasarkan isi byte.
 Setiap gambar identik disimpan sekali, lalu entri tabel gambar memakai offset
 yang sama. Perbandingan memakai keseluruhan byte, termasuk ukuran, warna dan alpha.
-ID logis, urutan 29 kondisi cuaca, semua parameter serta rentang gambar tetap sama.
+ID logis, semua parameter serta rentang gambar tetap sama.
 Tidak ada kuantisasi, peredupan baru, penghilangan field, atau perubahan alignment.
 
 | Ukuran yang diukur | Sebelum | Kandidat |

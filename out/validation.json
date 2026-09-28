@@ -1,12 +1,12 @@
 {
-  "sha256": "5b3e75de0818c40a812da07f501a66b1a6e5e2dcc09ecee5cd034ee89f2442a6",
-  "bytes": 650214,
-  "images": 156,
+  "sha256": "a092a2a415df8aaf7fe531ce09db4c5b48eb4eeb3c78cdedf793e64fdb774032",
+  "bytes": 595638,
+  "images": 96,
   "container": {
     "device_id": 83,
-    "quicklz_blocks": 475,
+    "quicklz_blocks": 430,
     "decoded_block_bytes": 4096,
-    "raw_tail_bytes": 3935,
+    "raw_tail_bytes": 1258,
     "format_marker": 1
   },
   "parameter_roundtrip": true,

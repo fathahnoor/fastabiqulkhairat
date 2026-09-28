@@ -79,9 +79,9 @@ def small_digit(digit):
 def background():
     im=Image.open(SRC).convert('RGBA')
     # Only the variable regions are cleared; all static artwork stays source-identical.
-    regions=[(118,542,1140,848),(287,188,379,237),(839,117,996,171),
+    regions=[(118,542,1140,848),(255,190,445,255),(839,117,996,171),
              (838,185,1028,233),(238,983,398,1033),(584,983,668,1033),(869,983,1007,1033),
-             (285,86,410,183)]
+             (285,84,412,185)]
     tile=im.crop((450,25,790,155))
     for x0,y0,x1,y1 in regions:
         for y in range(y0,y1):

@@ -182,38 +182,29 @@ def generate():
     for ch in '0123456789':
         add(source_assets.small_digit(int(ch)))
     pct = add(source_assets.approved_crop((950,984,1008,1032),(15,13)))
-    degree = add(source_assets.approved_crop((367,190,381,209),(4,5)))
     weekdays = len(images)
     for s in ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']:
         add(source_assets.approved_crop((846,119,990,167),(41,14)) if s=='MON' else cell(s,41,14,19))
     months = len(images)
     for s in ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']:
         add(source_assets.approved_crop((840,188,948,230),(31,12)) if s=='AUG' else cell(s,31,12,17))
-    weather = len(images)
-    # UIHH weather order follows the existing T-Rex Pro baseline (29 states).
-    kinds = ['sun', 'partly', 'partly', 'cloud', 'rain', 'rain', 'rain', 'storm',
-             'snow', 'snow', 'snow', 'snow', 'fog', 'fog', 'sand', 'wind',
-             'moon', 'cloud', 'cloud', 'rain', 'rain', 'storm', 'snow', 'fog',
-             'cloud', 'rain', 'sun', 'cloud', 'cloud']
-    for kind in kinds:
-        add(source_assets.approved_crop((287,85,410,184),(35,28)) if kind=='partly' else icon(kind,28))
-    # One logical time field compiled into the linked components required by UIHH.
+    # Baris atas: satu baris proporsional Bulan (kiri) - Hari (tengah) - Tanggal (kanan).
+    # Tiap item berpusat di sepertiga layar (60/180/300). Tanpa indikator cuaca.
     time = compile_time_field(TIME, big, colon_id)
     date = {'YearMonthDay': [
-        {'Type': 1, 'Independent': True, 'Text': number(241,55,months,12,unknown6=1)},
-        {'Type': 2, 'Independent': True, 'Text': number(276,55,small,zero=1)}],
-        'Week': {'Independent': True, 'Text': number(244,35,weekdays,7,unknown6=1)}}
+        {'Type': 1, 'Independent': True, 'Text': number(44,41,months,12,unknown6=1)},
+        {'Type': 2, 'Independent': True, 'Text': number(289,41,small,zero=1)}],
+        'Week': {'Independent': True, 'Text': number(160,40,weekdays,7,unknown6=1)}}
     data = []
     for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('HeartRate',180,3,None),('Battery',270,3,pct)]:
         x = cx-(maxdigits*11+1)//2-(7 if suffix else 0)
         data.append({'Type': typ, 'NumberSequence': {'Independent': True,
                     'Text': number(x,284,small, align='Center', suffix=suffix)}})
-    data += [{'Type': 'Weather', 'NumberSequence': {'Independent': True, 'Text': number(85,55,small, suffix=degree)}},
-             {'Type': 'Weather', 'Linear': {'Segments': {'X':83,'Y':25}, 'ImageRange': {'ImageIndex': weather, 'ImagesCount': 29}}}]
+    # Tanpa field cuaca: suhu dan ikon kondisi sudah dihapus dari Data.
     # All fields remain in AOD. Use dimmed bitmaps, with no runtime timer.
     count = len(images)
     for index, im in enumerate(images[:]):
-        gain = .85 if big <= index <= colon_id else (.80 if small <= index < weather else .30)
+        gain = .85 if big <= index <= colon_id else (.80 if small <= index else .30)
         dark = ImageEnhance.Brightness(im).enhance(gain)
         if index == bg:
             # Static Arabic and metric labels are baked into the source background.
@@ -235,7 +226,7 @@ def generate():
     percent.alpha_composite(images[pct+count],(0,5))
     images.append(percent)
     day_text = idle['Date']['YearMonthDay'][1]['Text']
-    day_text['Image'].update(Y=51, ImageRange=localized(aod_numbers,10))
+    day_text['Image'].update(Y=37, ImageRange=localized(aod_numbers,10))
     for entry in idle['Data']:
         if entry['Type'] not in ('Steps','HeartRate','Battery'):
             continue
@@ -249,6 +240,11 @@ def generate():
               'Time': time, 'System': {'Date': date, 'Data': data}, 'IdleScreen': idle}
     for i, im in enumerate(images):
         im.save(BUILD/f'{i}.png')
+    # Jumlah gambar bisa menyusut saat aset dihapus (mis. ikon cuaca);
+    # hapus PNG bernomor basi agar pack tidak membaca indeks hantu.
+    for stale in BUILD.glob('[0-9]*.png'):
+        if int(stale.stem) >= len(images):
+            stale.unlink()
     (BUILD/'watchface.json').write_text(json.dumps(params, indent=2), encoding='utf-8')
     (ROOT/'design.json').write_text(json.dumps({'name': 'fastabiqulkhairat', 'device': 'Amazfit T-Rex Pro',
         'screen': [360,360], 'arabic': ARABIC, 'time_field': TIME,
@@ -264,7 +260,7 @@ def text_start(cfg, width, maxdigits, digit_width):
 
 
 def render(params, images, hour=10, minute=47, steps=8327, hr=72, battery=86,
-           day=26, month=8, weekday=0, temp=28, condition=1, idle=False):
+           day=26, month=8, weekday=0, idle=False):
     mode = params['IdleScreen'] if idle else params
     im = images[mode['BackgroundImageIndex'] if idle else mode['Background']['ImageIndex']].copy()
     def digits(cfg, value, maxdigits, forced_x=None, forced_y=None):
@@ -296,14 +292,11 @@ def render(params, images, hour=10, minute=47, steps=8327, hr=72, battery=86,
         node = cfg['Image']
         im.alpha_composite(images[node['ImageRange']['ImageRange']['ImageIndex']+offset], (node['X'],node['Y']))
     digits(date['YearMonthDay'][1]['Text'], day, 2)
-    values = {'Steps': (steps,5), 'HeartRate': (hr,3), 'Battery': (battery,3), 'Weather': (temp,2)}
+    values = {'Steps': (steps,5), 'HeartRate': (hr,3), 'Battery': (battery,3)}
     for entry in system['Data']:
         if 'NumberSequence' in entry:
             value, n = values[entry['Type']]
             digits(entry['NumberSequence']['Text'], value, n)
-        else:
-            node = entry['Linear']
-            im.alpha_composite(images[node['ImageRange']['ImageIndex']+condition], (node['Segments']['X'],node['Segments']['Y']))
     return im
 
 
