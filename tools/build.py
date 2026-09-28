@@ -188,13 +188,14 @@ def generate():
     months = len(images)
     for s in ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']:
         add(source_assets.approved_crop((840,188,948,230),(31,12)) if s=='AUG' else cell(s,31,12,17))
-    # Baris atas: satu baris proporsional Bulan (kiri) - Hari (tengah) - Tanggal (kanan).
-    # Tiap item berpusat di sepertiga layar (60/180/300). Tanpa indikator cuaca.
+    # Baris atas: satu baris Bulan (kiri) - Tanggal (tengah) - Hari (kanan).
+    # Bulan dan Hari digeser sedikit ke tengah dari titik sepertiga (60/300).
+    # Tanpa indikator cuaca.
     time = compile_time_field(TIME, big, colon_id)
     date = {'YearMonthDay': [
-        {'Type': 1, 'Independent': True, 'Text': number(44,41,months,12,unknown6=1)},
-        {'Type': 2, 'Independent': True, 'Text': number(289,41,small,zero=1)}],
-        'Week': {'Independent': True, 'Text': number(160,40,weekdays,7,unknown6=1)}}
+        {'Type': 1, 'Independent': True, 'Text': number(56,41,months,12,unknown6=1)},
+        {'Type': 2, 'Independent': True, 'Text': number(169,41,small,zero=1)}],
+        'Week': {'Independent': True, 'Text': number(268,40,weekdays,7,unknown6=1)}}
     data = []
     for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('HeartRate',180,3,None),('Battery',270,3,pct)]:
         x = cx-(maxdigits*11+1)//2-(7 if suffix else 0)

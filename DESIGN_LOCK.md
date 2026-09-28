@@ -13,7 +13,7 @@ Implementasi saat ini:
 - Kaligrafi memakai `reference/calligraphy-approved-20260923.jpeg`. Latar putih diekstrak, rasio aspek dipertahankan pada lebar 250 px, lalu digabung ke latar hitam dalam area (48,89)-(303,145). Jangan menggambar ulang huruf.
 - `tools/build.py` membangun versi desain final; binary lama sudah digantikan setelah validasi.
 - Digit kecil yang tersedia, MON, dan AUG diekstrak. Karakter tanggal/hari lain memakai aset pendukung karena sumber lengkap tidak tersedia. Indikator cuaca (ikon + suhu) dihapus atas instruksi pengguna; area bekasnya dikosongkan ke tekstur gelap.
-- Baris atas adalah satu baris proporsional Bulan (kiri, X=44, Y=41) - Hari (tengah, X=160, Y=40) - Tanggal (kanan, X=289, Y=41), masing-masing berpusat di sepertiga layar (60/180/300). Tanggal AOD memakai sel 14 x 18 px pada Y=37 dengan dasar sejajar.
+- Baris atas adalah satu baris Bulan (kiri, X=56, Y=41) - Tanggal (tengah, X=169, Y=41) - Hari (kanan, X=268, Y=40). Tanggal berpusat di tengah layar (180); Bulan dan Hari digeser ~12 px ke tengah dari titik sepertiga. Tanggal AOD memakai sel 14 x 18 px pada Y=37 dengan dasar sejajar.
 
 Jangan kembali memakai Noto Kufi Arabic untuk kaligrafi atau Oxanium untuk jam. Jangan regenerasi desain. Selalu periksa `out/scenarios.png` dan `out/digits-normalized.png` setelah perubahan visual. Instalasi fisik di T-Rex Pro tetap perlu diverifikasi oleh pengguna.
 
