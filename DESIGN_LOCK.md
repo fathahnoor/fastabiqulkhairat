@@ -12,8 +12,8 @@ Implementasi saat ini:
 - Instruksi terbaru: seluruh jam, titik dua, dan menit harus diperlakukan sebagai satu field dengan alignment Center. `time_group_layout()` menghitung lebar semua komponen sebelum menentukan posisi kiri. Jangan kembali ke perataan jam saja.
 - Kaligrafi memakai `reference/calligraphy-approved-20260923.jpeg`. Latar putih diekstrak, rasio aspek dipertahankan pada lebar 250 px, lalu digabung ke latar hitam dalam area (48,89)-(303,145). Jangan menggambar ulang huruf.
 - `tools/build.py` membangun versi desain final; binary lama sudah digantikan setelah validasi.
-- Digit kecil yang tersedia, MON, dan AUG diekstrak. Karakter tanggal/hari lain memakai aset pendukung karena sumber lengkap tidak tersedia. Indikator cuaca (ikon + suhu) dihapus atas instruksi pengguna; area bekasnya dikosongkan ke tekstur gelap.
-- Baris atas adalah satu baris Bulan (kiri, X=56, Y=41) - Tanggal (tengah, X=169, Y=41) - Hari (kanan, X=268, Y=40). Tanggal berpusat di tengah layar (180); Bulan dan Hari digeser ~12 px ke tengah dari titik sepertiga. Tanggal AOD memakai sel 14 x 18 px pada Y=37 dengan dasar sejajar.
+- Digit kecil yang tersedia dan MON dipotong langsung; AUG dari sumber diskalakan ke tinggi 14 px agar seragam. Karakter tanggal/bulan/hari lain memakai font pendukung Rajdhani. Indikator cuaca (ikon + suhu) dihapus atas instruksi pengguna; area bekasnya dikosongkan ke tekstur gelap.
+- Baris atas: Bulan (kiri, X=70, Y=40) - Tanggal (tengah, X=166, Y=39) - Hari (kanan, X=250, Y=40). Bulan dan Hari sejajar kolom STEPS (~90) dan BATTERY (~270); tanggal tetap di tengah (180). Ukuran huruf bulan dan hari sama: Rajdhani 20 di sel 41 x 14 px. Tanggal memakai sel 14 x 15 px; AOD memakai sel 14 x 18 px di Y=37.
 
 Jangan kembali memakai Noto Kufi Arabic untuk kaligrafi atau Oxanium untuk jam. Jangan regenerasi desain. Selalu periksa `out/scenarios.png` dan `out/digits-normalized.png` setelah perubahan visual. Instalasi fisik di T-Rex Pro tetap perlu diverifikasi oleh pengguna.
 

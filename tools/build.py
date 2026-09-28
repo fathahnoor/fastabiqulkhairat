@@ -55,6 +55,17 @@ def centered(canvas, im, x, y):
     canvas.alpha_composite(im, (round(x-im.width/2), y))
 
 
+def month_sprite(label):
+    """Month text in one cell size; AUG keeps its supplied artwork, scaled up."""
+    if label != 'AUG':
+        return cell(label, 41, 14, 20)
+    raw = source_assets.approved_crop((840,188,948,230))
+    raw = raw.resize((round(raw.width*14/raw.height), 14), Image.Resampling.LANCZOS)
+    out = Image.new('RGBA', (41, 14))
+    out.alpha_composite(raw, ((41-raw.width)//2, (14-raw.height)//2))
+    return out
+
+
 def star(draw, cx, cy, radius):
     points = []
     for i in range(16):
@@ -181,21 +192,23 @@ def generate():
     small = len(images)
     for ch in '0123456789':
         add(source_assets.small_digit(int(ch)))
+    date_digits = len(images)
+    for ch in '0123456789':
+        add(source_assets.date_digit(int(ch)))
     pct = add(source_assets.approved_crop((950,984,1008,1032),(15,13)))
     weekdays = len(images)
     for s in ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']:
-        add(source_assets.approved_crop((846,119,990,167),(41,14)) if s=='MON' else cell(s,41,14,19))
+        add(source_assets.approved_crop((846,119,990,167),(41,14)) if s=='MON' else cell(s,41,14,20))
     months = len(images)
     for s in ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']:
-        add(source_assets.approved_crop((840,188,948,230),(31,12)) if s=='AUG' else cell(s,31,12,17))
-    # Baris atas: satu baris Bulan (kiri) - Tanggal (tengah) - Hari (kanan).
-    # Bulan dan Hari digeser sedikit ke tengah dari titik sepertiga (60/300).
-    # Tanpa indikator cuaca.
+        add(month_sprite(s))
+    # Baris atas: Bulan (kiri) - Tanggal (tengah) - Hari (kanan).
+    # Bulan dan Hari sejajar kolom STEPS (~90) dan BATTERY (~270); tanggal tetap 180.
     time = compile_time_field(TIME, big, colon_id)
     date = {'YearMonthDay': [
-        {'Type': 1, 'Independent': True, 'Text': number(56,41,months,12,unknown6=1)},
-        {'Type': 2, 'Independent': True, 'Text': number(169,41,small,zero=1)}],
-        'Week': {'Independent': True, 'Text': number(268,40,weekdays,7,unknown6=1)}}
+        {'Type': 1, 'Independent': True, 'Text': number(70,40,months,12,unknown6=1)},
+        {'Type': 2, 'Independent': True, 'Text': number(166,39,date_digits,zero=1)}],
+        'Week': {'Independent': True, 'Text': number(250,40,weekdays,7,unknown6=1)}}
     data = []
     for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('HeartRate',180,3,None),('Battery',270,3,pct)]:
         x = cx-(maxdigits*11+1)//2-(7 if suffix else 0)
@@ -386,7 +399,7 @@ def main():
         assert left==expected_left,(hour,minute,left)
     report = {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'images':len(blobs),
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
-              'group_center_preview_cases':2880,'firmware_centering_verified':False,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'calligraphy_pixel_delta':0,
+              'group_center_preview_cases':2880,'firmware_centering_verified':False,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'date_cell':[14,15],'month_weekday_cell':[41,14],'month_weekday_center_x':[90,270],'calligraphy_pixel_delta':0,
               'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET,source_assets.CALLIGRAPHY)},'arabic_text':ARABIC,'arabic_source':'user-supplied 20260923 artwork, white matte removed, aspect ratio preserved',
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')

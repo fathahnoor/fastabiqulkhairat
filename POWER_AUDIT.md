@@ -1,13 +1,13 @@
 # Audit teknis AOD, 17 September 2026
 
-Pembaruan terkini: indikator cuaca (ikon + suhu) dihapus dan baris atas
-menjadi Bulan-Hari-Tanggal proporsional. Build terkini menghasilkan
-595.638 byte (standar dan optimized, identik karena seluruh 96 gambar
-logis kini unik). Jumlah gambar logis turun dari 156 ke 96.
-Pada skenario AOD 5:11, jumlah kanal RGB turun 8,07% dari build sebelum penggantian;
-ini metrik gambar, bukan persentase penghematan baterai. Tidak ada perubahan piksel
-di luar panel kaligrafi atau perubahan parameter runtime. Angka tabel di bawah
-adalah hasil audit awal 17 September; hasil terkini ada di `out/power-audit.json`.
+Pembaruan terkini: indikator cuaca dihapus dan baris atas disusun ulang
+menjadi Bulan (kiri) - Tanggal (tengah) - Hari (kanan) dengan ukuran huruf
+bulan dan hari yang seragam serta tanggal diperbesar. Build terkini
+menghasilkan 615.848 byte (standar dan optimized, identik karena seluruh
+116 gambar logis kini unik). Jumlah gambar logis turun dari 156 ke 116;
+pengurangan terbesar berasal dari 30 aset cuaca. Angka tabel di bawah
+adalah hasil audit awal 17 September; hasil terkini ada di
+`out/power-audit.json`.
 
 
 Pengguna selalu memakai AOD dan melaporkan baterai boros. Belum ada angka

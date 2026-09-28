@@ -1,12 +1,12 @@
 {
-  "sha256": "6c1c43123accca7b5e18e5010829d1749adcf96dd067cd71ff50de51db0001fc",
-  "bytes": 595646,
-  "images": 96,
+  "sha256": "9f903f8ba2f9f1f048bc02182714ce4d03e84f9f7f722e773323a4d08a8a6156",
+  "bytes": 615848,
+  "images": 116,
   "container": {
     "device_id": 83,
-    "quicklz_blocks": 430,
+    "quicklz_blocks": 439,
     "decoded_block_bytes": 4096,
-    "raw_tail_bytes": 1258,
+    "raw_tail_bytes": 1146,
     "format_marker": 1
   },
   "parameter_roundtrip": true,
@@ -29,6 +29,18 @@
     18
   ],
   "aod_metric_gain": 1.0,
+  "date_cell": [
+    14,
+    15
+  ],
+  "month_weekday_cell": [
+    41,
+    14
+  ],
+  "month_weekday_center_x": [
+    90,
+    270
+  ],
   "calligraphy_pixel_delta": 0,
   "source_sha256": {
     "reference\\approved-design.png": "19bb9952bea6322dce139f75c94f0a006742b61e82089096acbb431c25b8b937",

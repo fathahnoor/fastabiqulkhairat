@@ -76,6 +76,17 @@ def small_digit(digit):
     return im
 
 
+def date_digit(digit):
+    # Larger day-of-month cell so the date reads clearly beside month and weekday.
+    boxes={2:(628,987,665,1030),3:(284,985,318,1033),6:(913,987,950,1030),
+           7:(355,985,389,1033),8:(246,987,281,1030)}
+    raw=approved_crop(boxes[digit]) if digit in boxes else digits()[digit]
+    raw=raw.resize((7 if digit==1 else 12,15),Image.Resampling.LANCZOS)
+    im=Image.new('RGBA',(14,15))
+    im.alpha_composite(raw,((14-raw.width)//2,0))
+    return im
+
+
 def background():
     im=Image.open(SRC).convert('RGBA')
     # Only the variable regions are cleared; all static artwork stays source-identical.
