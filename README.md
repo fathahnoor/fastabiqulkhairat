@@ -11,8 +11,9 @@ dengan kaligrafi, angka keemasan, dan latar hitam untuk **Amazfit T-Rex Pro
 ## 🌙 Yang menemani harimu
 
 - **Kaligrafi sebagai pusat perhatian**, dengan ornamen dan nuansa emas di atas latar gelap.
+- **Aksen merah tipis di sisi kiri-kanan**, tetap terang saat always-on (tidak ikut meredup).
 - **Jam besar dengan bentuk angka khas**, disusun sebagai satu grup waktu yang rata tengah pada preview.
-- **Informasi harian tetap dekat:** bulan, tanggal, dan hari dalam satu baris atas yang proporsional, sejajar dengan kolom metrik.
+- **Informasi harian tetap dekat:** hari, tanggal, dan bulan dalam satu baris atas yang proporsional, sejajar dengan kolom metrik.
 - **Langkah, detak jantung, dan baterai** untuk dilirik di sela aktivitas.
 - **Always-on tetap lengkap**, dengan latar dan ornamen lebih redup serta angka metrik dan tanggal yang diperbesar.
 
@@ -46,6 +47,8 @@ yang ingin mengutak-atik desainnya sendiri.
 
 Kaligrafi diperbarui 24 September 2026 dari `reference/calligraphy-approved-20260923.jpeg`. Bentuk huruf dan proporsi sumber dipertahankan, latar putih dihapus, lalu artwork digabung ke bitmap latar agar tidak menambah komponen runtime. Area selain kaligrafi tetap identik. [Verifikasi perubahan](out/calligraphy-update-check.json).
 
+Aksen merah ditambahkan 28 September 2026: busur tipis `#E23E30` di sisi kiri-kanan (radius 168 px, tebal 2 px, rentang 80° per sisi dengan fade di ujung), digabung ke bitmap latar sebagai artwork statis tanpa komponen runtime, tetap 100% pada AOD (tidak ikut meredup), dan diverifikasi build lewat `out/validation.json`. Dua panah merah kecil di atas-bawah dihapus atas permintaan pengguna.
+
 - `reference/approved-design.png`: desain final pengguna. Ornamen, garis, ikon metrik, dan label diambil langsung dari gambar ini. Tidak diketik ulang atau digambar ulang.
 - `reference/digits-approved.jpg`: lembar digit pengguna. Seluruh digit besar diambil dari lembar ini; angka 4 memakai varian lipatan pada baris kedua.
 - Proporsi badan digit memakai tinggi 81 px dan lebar 66 px, kecuali angka 1 yang tetap ramping pada 38 px. Semua aset memiliki margin transparan 1 px di kiri dan kanan: sel 68 x 81 px untuk digit lain dan 40 x 81 px untuk angka 1. Jarak dirapikan dengan memangkas padding, bukan melebarkan bentuk angka 1.
@@ -77,7 +80,7 @@ python tools/build.py
 
 Memerlukan Python dan Pillow. Tidak diperlukan pembentukan font Arab atau imagegen untuk build. Proses membuat aset, mengemas binary UIHH v2 terkompresi, membongkar kembali binary, membandingkan parameter dan semua piksel, lalu merender preview dari hasil pembongkaran.
 
-AOD mempertahankan seluruh elemen. Intensitas kanal RGB angka jam, menit, dan titik dua adalah 85%. Teks dan angka lainnya, termasuk tanggal, suhu, metrik, satuan, label, dan kaligrafi, memakai 80%. Ikon, ornamen, dan latar tetap 30%. Khusus angka langkah, BPM, baterai, dan tanggal pada AOD, sel diperbesar dari 11 x 13 menjadi 14 x 18 px dengan intensitas 100%. Label, nama hari/bulan, dan simbol persen tidak diperbesar. Posisi angka disesuaikan agar tetap terpisah dari ikon serta label. Data dinamis: hari, bulan, tanggal, langkah, detak jantung, dan baterai. Kesegaran data bergantung pada firmware.
+AOD mempertahankan seluruh elemen. Intensitas kanal RGB angka jam, menit, dan titik dua adalah 85%. Teks dan angka lainnya, termasuk tanggal, suhu, metrik, satuan, label, dan kaligrafi, memakai 80%. Ikon, ornamen, dan latar tetap 30%, sedangkan aksen merah latar (busur sisi) tetap 100% dan tidak ikut meredup. Khusus angka langkah, BPM, baterai, dan tanggal pada AOD, sel diperbesar dari 11 x 13 menjadi 14 x 18 px dengan intensitas 100%. Label, nama hari/bulan, dan simbol persen tidak diperbesar. Posisi angka disesuaikan agar tetap terpisah dari ikon serta label. Data dinamis: hari, bulan, tanggal, langkah, detak jantung, dan baterai. Kesegaran data bergantung pada firmware.
 
 Target adalah T-Rex Pro generasi awal. Instalasi fisik dan perilaku firmware, termasuk grup waktu dan pembaruan AOD, belum diuji pada jam. Hasil uji perangkat lunak tersedia di `out/validation.json`.
 
@@ -89,3 +92,5 @@ Font yang tersimpan berlisensi SIL OFL, salinan lisensi ada di `assets/fonts`. D
 
 Dibuat oleh [@fathahnoor](https://github.com/fathahnoor). Semoga setiap lirikan
 ke jam menjadi pengingat untuk menyempatkan satu kebaikan lagi. 🌿
+
+Urutan tampilan normal dan AOD: bagian atas hari - tanggal - bulan; bagian bawah STEPS - BATTERY - BPM. Ikon serta label metrik mengikuti posisi angkanya.

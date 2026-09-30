@@ -2,7 +2,7 @@
   "decoder": "Nadeflore/watchface-js",
   "revision": "0817bf8016b6e2cc8d86e85a284f61318b9b715f",
   "parameter_identity": true,
-  "images_verified": 156,
+  "images_verified": 116,
   "max_pixel_delta": 0,
   "device_compatibility_verified": false
 }

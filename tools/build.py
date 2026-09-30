@@ -165,6 +165,34 @@ def time_group_layout(block, images, hour, minute):
     return left,node['Y'],parts
 
 
+def verify_red_accents(im, aod):
+    """Audit the red side arcs on both backgrounds.
+
+    Main and AOD backgrounds must carry the arcs, and the AOD copy must keep
+    them at full brightness instead of the background's 30% dim.
+    """
+    def scan(src, box):
+        x0,y0,x1,y1=box
+        total=0
+        best=0
+        for y in range(y0,y1):
+            for x in range(x0,x1):
+                r,g,b,a=src.getpixel((x,y))
+                if a and r>=120 and r-g>=50 and r-b>=60:
+                    total+=1
+                    best=max(best,r)
+        return total,best
+    audit={}
+    for name,src in (('main',im),('aod',aod)):
+        left,left_r=scan(src,(4,120,40,240))
+        right,right_r=scan(src,(320,120,356,240))
+        assert left>=50 and right>=50,(name,left,right)
+        assert min(left_r,right_r)>=180,(name,left_r,right_r)
+        audit[name]={'side_arc_pixels':[left,right],'side_arc_max_red':[left_r,right_r]}
+    audit['aod_does_not_dim_red']=True
+    return audit
+
+
 def generate():
     images = []
     def add(im):
@@ -195,15 +223,14 @@ def generate():
     for sprite in images[weekdays:months+12]:
         box = sprite.getchannel('A').getbbox()
         assert box and box[3]-box[1] == 14, box
-    # Baris atas: Bulan (kiri) - Tanggal (tengah) - Hari (kanan).
-    # Bulan dan Hari sejajar kolom STEPS (~90) dan BATTERY (~270); tanggal tetap 180.
+    # Baris atas: Hari (kiri) - Tanggal (tengah) - Bulan (kanan).
     time = compile_time_field(TIME, big, colon_id)
     date = {'YearMonthDay': [
-        {'Type': 1, 'Independent': True, 'Text': number(70,40,months,12,unknown6=1)},
+        {'Type': 1, 'Independent': True, 'Text': number(250,40,months,12,unknown6=1)},
         {'Type': 2, 'Independent': True, 'Text': number(166,39,date_digits,zero=1)}],
-        'Week': {'Independent': True, 'Text': number(250,40,weekdays,7,unknown6=1)}}
+        'Week': {'Independent': True, 'Text': number(70,40,weekdays,7,unknown6=1)}}
     data = []
-    for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('HeartRate',180,3,None),('Battery',270,3,pct)]:
+    for typ, cx, maxdigits, suffix in [('Steps',90,5,None),('Battery',180,3,pct),('HeartRate',270,3,None)]:
         x = cx-(maxdigits*11+1)//2-(7 if suffix else 0)
         data.append({'Type': typ, 'NumberSequence': {'Independent': True,
                     'Text': number(x,284,small, align='Center', suffix=suffix)}})
@@ -217,8 +244,10 @@ def generate():
             # Static Arabic and metric labels are baked into the source background.
             readable = ImageEnhance.Brightness(im).enhance(.80)
             for box in ((48,89,303,145), (66,299,115,311),
-                        (167,299,193,311), (247,299,296,311)):
+                        (157,299,206,311), (257,299,283,311)):
                 dark.paste(readable.crop(box), box)
+            # Aksen merah tetap terang penuh di AOD: tempel ulang setelah peredupan.
+            dark.alpha_composite(source_assets.red_accents())
         images.append(dark)
     idle = shift_image_ids({'Time': copy.deepcopy(time), 'Date': copy.deepcopy(date),
                            'Data': copy.deepcopy(data), 'BackgroundImageIndex': bg}, count)
@@ -237,7 +266,7 @@ def generate():
     for entry in idle['Data']:
         if entry['Type'] not in ('Steps','HeartRate','Battery'):
             continue
-        cx, n = {'Steps':(90,5),'HeartRate':(180,3),'Battery':(270,3)}[entry['Type']]
+        cx, n = {'Steps':(90,5),'Battery':(180,3),'HeartRate':(270,3)}[entry['Type']]
         node=entry['NumberSequence']['Text']['Image']
         node.update(X=cx-(n*14+1)//2-(7 if entry['Type']=='Battery' else 0),
                     Y=281, ImageRange=localized(aod_numbers,10))
@@ -255,6 +284,12 @@ def generate():
     (BUILD/'watchface.json').write_text(json.dumps(params, indent=2), encoding='utf-8')
     (ROOT/'design.json').write_text(json.dumps({'name': 'fastabiqulkhairat', 'device': 'Amazfit T-Rex Pro',
         'screen': [360,360], 'arabic': ARABIC, 'time_field': TIME,
+        'top_order': ['weekday','day','month'],
+        'bottom_order': ['Steps','Battery','HeartRate'],
+        'red_accent': {'ring_radius': source_assets.RED_GEOMETRY['ring_radius'],
+                       'ring_width': source_assets.RED_GEOMETRY['ring_width'],
+                       'ring_span_deg': source_assets.RED_GEOMETRY['ring_span_deg'],
+                       'color': list(source_assets.RED)},
         'compiler': 'one Center time field compiled to native linked hour, suffix and following minute components'}, indent=2, ensure_ascii=False), encoding='utf-8')
     return params, images
 
@@ -319,6 +354,7 @@ def main():
     BUILD.mkdir(exist_ok=True)
     OUT.mkdir(exist_ok=True)
     p, images = generate()
+    red_audit=verify_red_accents(images[0],images[p['IdleScreen']['BackgroundImageIndex']])
     region=source_assets.CALLIGRAPHY_REGION
     delta=ImageChops.difference(images[0].crop(region),source_assets.calligraphy_panel())
     assert max(channel[1] for channel in delta.getextrema())==0, 'Calligraphy changed'
@@ -349,6 +385,14 @@ def main():
         maxdelta = max(maxdelta,max(abs(a-b) for a,b in zip(im.tobytes(),src.tobytes())))
     assert maxdelta <= 8, maxdelta
     roundtrip = shift_image_ids(firmware,-1)
+    for mode in (roundtrip['System'],roundtrip['IdleScreen']):
+        date=mode['Date']
+        assert date['Week']['Text']['Image']['X']==70
+        assert date['YearMonthDay'][1]['Text']['Image']['X']==166
+        assert date['YearMonthDay'][0]['Text']['Image']['X']==250
+        assert [entry['Type'] for entry in mode['Data']]==['Steps','Battery','HeartRate']
+        positions=[entry['NumberSequence']['Text']['Image']['X'] for entry in mode['Data']]
+        assert positions==([55,152,249] if mode is roundtrip['IdleScreen'] else [62,156,253]),positions
     # Unpacker collapses singleton lists. This dial uses multiple time/date/data entries.
     scenarios = [dict(hour=10,minute=47),dict(hour=9,minute=7),dict(hour=1,minute=11),
                  dict(hour=23,minute=59,steps=99999,hr=220,battery=100,day=31,month=12,weekday=6),
@@ -394,6 +438,8 @@ def main():
               'container':checks,'parameter_roundtrip':True,'max_pixel_delta':maxdelta,
               'group_center_preview_cases':2880,'firmware_centering_verified':False,'max_center_offset_px':max_center_offset,'digit_cell':[68,81],'digit_one_cell':[40,81],'digit_one_body_width':38,'digit_padding_px':1,'aod_metric_cell':[14,18],'aod_metric_gain':1.0,'date_cell':[14,15],'month_weekday_cell':[41,14],'month_weekday_font_size':22,'month_weekday_cap_height':14,'month_weekday_center_x':[90,270],'calligraphy_pixel_delta':0,
               'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in (source_assets.SRC,source_assets.SHEET,source_assets.CALLIGRAPHY)},'arabic_text':ARABIC,'arabic_source':'user-supplied 20260923 artwork, white matte removed, aspect ratio preserved',
+              'red_accent':{'ring_radius_px':source_assets.RED_GEOMETRY['ring_radius'],'ring_width_px':source_assets.RED_GEOMETRY['ring_width'],'ring_span_deg':source_assets.RED_GEOMETRY['ring_span_deg'],'color_rgb':list(source_assets.RED),'arrows_removed_per_user_request':True,**red_audit},
+              'layout_order':{'top':['weekday','day','month'],'bottom':['Steps','Battery','HeartRate']},
               'device_test':'Pending physical T-Rex Pro installation'}
     (OUT/'validation.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
     print(json.dumps(report,indent=2))

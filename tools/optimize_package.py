@@ -41,7 +41,7 @@ def main():
     assert set(idle) == {'Time', 'Date', 'Data', 'BackgroundImageIndex'}
     assert [entry['Type'] for entry in idle['Time']['Digital']['HoursMinutesSeconds']] == [0, 1]
     assert [entry['Type'] for entry in idle['Data']] == [
-        'Steps', 'HeartRate', 'Battery']
+        'Steps', 'Battery', 'HeartRate']
 
     candidate = pack(params, images, compress=True, deduplicate_images=True)
     after_container = validate_trexpro_container(candidate)

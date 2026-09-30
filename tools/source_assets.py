@@ -7,6 +7,10 @@ SRC=ROOT/'reference/approved-design.png'
 SHEET=ROOT/'reference/digits-approved.jpg'
 CALLIGRAPHY=ROOT/'reference/calligraphy-approved-20260923.jpeg'
 CALLIGRAPHY_REGION=(48,89,303,145)
+# Aksen merah: busur tipis di kiri-kanan. Dua panah atas-bawah dihapus atas
+# instruksi susulan pengguna.
+RED=(226,62,48)
+RED_GEOMETRY={'ring_radius':168,'ring_width':2,'ring_span_deg':80,'ring_solid_deg':60}
 
 @cache
 def calligraphy():
@@ -87,6 +91,35 @@ def date_digit(digit):
     return im
 
 
+@cache
+def red_accents():
+    """Red side arcs baked into the background.
+
+    Rendered at 4x and downsampled so the thin accents stay smooth. Kept as
+    static background artwork: no extra runtime image or widget is added.
+    """
+    scale=4
+    size=360
+    im=Image.new('RGBA',(size*scale,size*scale))
+    draw=ImageDraw.Draw(im)
+    cx=cy=(size-1)/2*scale
+    radius=RED_GEOMETRY['ring_radius']*scale
+    width=RED_GEOMETRY['ring_width']*scale
+    box=(cx-radius-width/2,cy-radius-width/2,cx+radius+width/2,cy+radius+width/2)
+    limit=RED_GEOMETRY['ring_span_deg']/2
+    solid=RED_GEOMETRY['ring_solid_deg']/2
+    for base in (0,180):
+        start=base-limit
+        while start<base+limit:
+            end=min(start+3,base+limit)
+            angle=abs((start+end)/2-base)
+            fade=1 if angle<=solid else max(0,(limit-angle)/(limit-solid))
+            if fade>0:
+                draw.arc(box,start,end,fill=(*RED,round(255*fade)),width=width)
+            start=end
+    return im.resize((size,size),Image.Resampling.LANCZOS)
+
+
 def background():
     im=Image.open(SRC).convert('RGBA')
     # Only the variable regions are cleared; all static artwork stays source-identical.
@@ -106,4 +139,10 @@ def background():
     base.paste(out,(0,0),mask)
     # Bake into the existing background: no extra runtime image/widget or redraw.
     base.paste(calligraphy_panel(),CALLIGRAPHY_REGION[:2])
+    # Move the original battery and BPM icons/labels with their data columns.
+    bpm_panel=base.crop((145,254,215,312))
+    battery_panel=base.crop((235,254,305,312))
+    base.paste(battery_panel,(145,254))
+    base.paste(bpm_panel,(235,254))
+    base.alpha_composite(red_accents())
     return base

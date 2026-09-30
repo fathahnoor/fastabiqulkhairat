@@ -17,5 +17,25 @@
     "digit_one_width": 40,
     "field_width": 294
   },
+  "top_order": [
+    "weekday",
+    "day",
+    "month"
+  ],
+  "bottom_order": [
+    "Steps",
+    "Battery",
+    "HeartRate"
+  ],
+  "red_accent": {
+    "ring_radius": 168,
+    "ring_width": 2,
+    "ring_span_deg": 80,
+    "color": [
+      226,
+      62,
+      48
+    ]
+  },
   "compiler": "one Center time field compiled to native linked hour, suffix and following minute components"
 }
